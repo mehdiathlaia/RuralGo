@@ -1,0 +1,245 @@
+/* RESPONSIVE GLOBAL STYLES */
+/* Aquestes classes s'apliquen globalment a tots els components */
+
+/* SVG responsive per a tots els icones */
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Grids responsives universals */
+[class*="grid"] {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Flexbox responsives universals */
+[class*="flex"] {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* Responsive text sizing per a tots els títols */
+h1, h2, h3, h4, h5, h6 {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Mobile-first spacing utilities */
+@media (max-width: 480px) {
+  /* Padding/Margin utilities per a mòbil */
+  .p-responsive { padding: clamp(8px, 3vw, 12px); }
+  .m-responsive { margin: clamp(8px, 3vw, 12px); }
+  .gap-responsive { gap: clamp(8px, 2vw, 12px); }
+  
+  /* Button sizes responsiu */
+  button, .btn, input[type="button"], input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px);
+    font-size: clamp(12px, 2vw, 14px);
+  }
+  
+  /* Form elements responsiu */
+  input, textarea, select {
+    min-height: 44px;
+    padding: clamp(10px, 2vw, 12px) clamp(10px, 2vw, 12px);
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Table responsiu */
+  table {
+    font-size: clamp(12px, 1.8vw, 13px);
+    overflow-x: auto;
+    display: block;
+  }
+  
+  table th, table td {
+    padding: clamp(6px, 1.5vw, 8px);
+  }
+  
+  /* Modal responsiu */
+  .modal, [class*="dialog"] {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    max-height: 90vh;
+    padding: clamp(12px, 3vw, 20px);
+  }
+  
+  /* Card responsiu */
+  .card, [class*="card"] {
+    margin: clamp(8px, 2vw, 12px);
+    padding: clamp(12px, 3vw, 16px);
+  }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .p-responsive { padding: clamp(12px, 3vw, 16px); }
+  .m-responsive { margin: clamp(12px, 3vw, 16px); }
+  .gap-responsive { gap: clamp(12px, 2vw, 16px); }
+  
+  /* Two-column layouts on tablet */
+  [class*="grid"] {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .p-responsive { padding: clamp(16px, 2vw, 24px); }
+  .m-responsive { margin: clamp(16px, 2vw, 24px); }
+  .gap-responsive { gap: clamp(16px, 2vw, 24px); }
+  
+  /* Three+ column layouts on desktop */
+  [class*="grid"] {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+  }
+}
+
+/* Landscape mode optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+  body, main, [class*="container"] {
+    padding: clamp(8px, 2vh, 12px) !important;
+  }
+  
+  h1, h2, h3 {
+    margin-bottom: clamp(4px, 1vh, 8px);
+  }
+  
+  .btn, button, input[type="button"] {
+    padding: clamp(4px, 1vh, 8px) clamp(12px, 2vw, 16px);
+    font-size: clamp(11px, 1.8vw, 12px);
+    min-height: 36px;
+  }
+}
+
+/* Touch-friendly zones */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase clickable areas on touch devices */
+  a, button, input[type="button"], input[type="submit"], .btn {
+    min-height: 48px;
+    min-width: 48px;
+    padding: clamp(10px, 2vw, 14px) clamp(14px, 3vw, 18px);
+  }
+  
+  /* Increase gap between clickable elements */
+  [class*="flex"], [class*="grid"] {
+    gap: clamp(12px, 2vw, 16px) !important;
+  }
+}
+
+/* High DPI screens */
+@media (min-resolution: 2dppx) {
+  /* Optimize text rendering on high DPI */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Print styles */
+@media print {
+  header, footer, nav, .no-print {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    color: #000;
+    background: white;
+  }
+  
+  img, svg {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Accessibility - High contrast */
+@media (prefers-contrast: more) {
+  * {
+    border-width: 2px;
+  }
+}
+
+/* Dark mode support (future) */
+@media (prefers-color-scheme: dark) {
+  /* Can be extended for dark mode support */
+}
+
+/* Responsive images */
+img, picture {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive videos */
+iframe, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Responsive aspect ratio containers */
+[class*="ratio"] {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Ensure all images in cards are responsive */
+.card img, [class*="card"] img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive icon sizes */
+svg[class*="icon"] {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}
+
+/* Responsive typography baseline */
+html {
+  /* Use viewport-relative units for responsive typography */
+  font-size: clamp(14px, 2.5vw, 18px);
+}
+
+/* Prevent horizontal scrolling on mobile */
+body, html {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Content wrapper responsiu */
+.container, main, [class*="wrapper"] {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(12px, 3vw, 24px);
+  padding-right: clamp(12px, 3vw, 24px);
+  box-sizing: border-box;
+}
+
+/* Safe area for notch devices */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+}

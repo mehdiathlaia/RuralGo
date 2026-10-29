@@ -1,0 +1,9 @@
+{
+  "appId": "com.ruralgo.app",
+  "appName": "Rural-Go",
+  "webDir": "dist",
+  "allowNavigation": ["https://ruralgo-backend.onrender.com"],
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: rural-go-backend
+    runtime: node
+    buildCommand: npm --prefix server install
+    startCommand: npm --prefix server start
+    envVars:
+      - key: MONGODB_URI
+        fromDatabase:
+          name: ruralgo
+      - key: JWT_SECRET
+        value: your-secret-key-abc123
+      - key: NODE_ENV
+        value: production

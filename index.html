@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2E7D6E">
+    <meta name="description" content="RURAL-GO VIVA - Mobilitat sostenible per a comunitats rurals">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>RURAL-GO VIVA</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+    <script>
+      // Càrrega la clau de Google Maps des de variables d'entorn o window
+      // Per a producció, hauràs de configurar una clau real a través de .env o deployment
+      window.GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyDemoKey';
+      
+      // Detectar si és device mòbil i ajustar viewport si necessari
+      if (/Mobile|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        document.documentElement.style.fontSize = '16px'; // Prevents zoom on iOS
+      }
+    </script>
+  </body>
+</html>
