@@ -1,5 +1,6 @@
 <template>
-  <div class="admin-panel" role="main" aria-label="Panel d'administració principal">
+  <div v-if="!registrationStore.adminAuthenticated" class="admin-panel"><form @submit.prevent="loginAdmin"><h1>Administración</h1><input v-model="adminEmailInput" type="email" placeholder="Correo" required><input v-model="adminPasswordInput" type="password" placeholder="Contraseña" required><p>{{ adminLoginError }}</p><button type="submit" :disabled="adminLoginLoading">Entrar</button></form></div>
+  <div v-else class="admin-panel" role="main" aria-label="Panel d'administració principal">
     <div class="admin-header">
       <h1>🔧 Panel d'Administració</h1>
       <div class="admin-actions">
