@@ -1,13 +1,13 @@
 <template>
   <div class="register-request-container">
     <div class="register-request-card">
-      <h1>Solicitud de Registre</h1>
-      <p class="intro-text">Completa el formulari per a sol·licitar l'accés a RURAL-GO VIVA. La teva sol·licitud serà revisada pel nostre equip d'administració.</p>
+      <h1>Sol·licitud de registre</h1>
+      <p class="intro-text">Omple el formulari per sol·licitar accés a RuralGo. L’equip d’administració revisarà la teva sol·licitud.</p>
 
       <form @submit.prevent="submitRequest" class="register-form">
         <!-- Tipus d'usuari -->
         <div class="form-group">
-          <label for="userType">Tipus d'Usuari *</label>
+          <label for="userType">Tipus d’usuari *</label>
           <select v-model="form.userType" id="userType" required>
             <option value="">Selecciona el teu rol</option>
             <option value="client">Client</option>
@@ -17,7 +17,7 @@
 
         <!-- Nom complet -->
         <div class="form-group">
-          <label for="name">Nom Complet *</label>
+          <label for="name">Nom complet *</label>
           <input 
             v-model="form.name" 
             type="text" 
@@ -29,7 +29,7 @@
 
         <!-- Correu -->
         <div class="form-group">
-          <label for="email">Correu *</label>
+          <label for="email">Correu electrònic *</label>
           <input 
             v-model="form.email" 
             type="email" 
@@ -79,7 +79,7 @@
 
         <!-- Codi Postal -->
         <div class="form-group">
-          <label for="postalCode">Codi Postal *</label>
+          <label for="postalCode">Codi postal *</label>
           <input 
             v-model="form.postalCode" 
             type="text" 
@@ -103,7 +103,7 @@
 
         <!-- Targeta Sanitària -->
         <div class="form-group">
-          <label for="healthCard">Número de Targeta Sanitària *</label>
+          <label for="healthCard">Número de targeta sanitària *</label>
           <input 
             v-model="form.healthCard" 
             type="text" 
@@ -113,9 +113,9 @@
           />
         </div>
 
-        <!-- Data de Naixement -->
+        <!-- Data de naixement -->
         <div class="form-group">
-          <label for="birthDate">Data de Naixement *</label>
+          <label for="birthDate">Data de naixement *</label>
           <input 
             v-model="form.birthDate" 
             type="date" 
@@ -124,9 +124,9 @@
           />
         </div>
 
-        <!-- Contacte d'Emergència -->
+        <!-- Contacte d’emergència -->
         <div class="form-group">
-          <label for="emergencyContact">Contacte d'Emergència (nom) *</label>
+          <label for="emergencyContact">Contacte d’emergència (nom) *</label>
           <input 
             v-model="form.emergencyContact" 
             type="text" 
@@ -138,7 +138,7 @@
 
         <!-- Telèfon Contacte Emergència -->
         <div class="form-group">
-          <label for="emergencyPhone">Telèfon del Contacte d'Emergència *</label>
+          <label for="emergencyPhone">Telèfon del Contacte d’emergència *</label>
           <input 
             v-model="form.emergencyPhone" 
             type="tel" 
@@ -151,7 +151,7 @@
         <!-- Camps adicionals per a conductors -->
         <template v-if="form.userType === 'driver'">
           <div class="form-group">
-            <label for="licenseNumber">Número de Carnet de Conduir *</label>
+            <label for="licenseNumber">Número del permís de conduir *</label>
             <input 
               v-model="form.licenseNumber" 
               type="text" 
@@ -162,7 +162,7 @@
           </div>
 
           <div class="form-group">
-            <label for="licenseExpiry">Data de Caducitat del Carnet *</label>
+            <label for="licenseExpiry">Data de caducitat del permís *</label>
             <input 
               v-model="form.licenseExpiry" 
               type="date" 
@@ -183,7 +183,7 @@
           </div>
 
           <div class="form-group">
-            <label for="insurance">Número de Pòlissa de Segurs *</label>
+            <label for="insurance">Número de pòlissa d’assegurança *</label>
             <input 
               v-model="form.insurance" 
               type="text" 
@@ -196,11 +196,11 @@
 
         <!-- Comentaris adicionals -->
         <div class="form-group">
-          <label for="comments">Comentaris Adicionals</label>
+          <label for="comments">Comentaris addicionals</label>
           <textarea 
             v-model="form.comments" 
             id="comments" 
-            placeholder="Informació adicional que consideris important"
+            placeholder="Informació addicional que consideris important"
             rows="4"
           ></textarea>
         </div>
@@ -219,7 +219,7 @@
         <!-- Botons -->
         <div class="form-actions">
           <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
-            {{ isSubmitting ? 'Enviant...' : 'Enviar Sol·licitud' }}
+            {{ isSubmitting ? 'Enviant…' : 'Enviar la sol·licitud' }}
           </button>
           <router-link to="/login" class="btn btn-secondary">
             Enrere
@@ -231,7 +231,7 @@
       <div v-if="successMessage" class="success-message">
         <p>✓ {{ successMessage }}</p>
         <router-link to="/login" class="btn btn-primary mt-3">
-          Anar a Accés
+          Ves a l’inici de sessió
         </router-link>
       </div>
     </div>
