@@ -83,7 +83,7 @@
           <div v-if="recoveryMessage" class="success-box" role="status">{{ recoveryMessage }}</div>
           <div class="form-group">
             <label for="newPassword">Contrasenya nova</label>
-            <input id="newPassword" v-model="recoveryPassword" type="password" autocomplete="new-password" minlength="10" required>
+            <input id="newPassword" v-model="recoveryPassword" type="password" autocomplete="new-password" minlength="10" maxlength="72" required>
           </div>
           <button class="btn btn-primary" type="submit" :disabled="recoveryLoading">{{ recoveryLoading ? 'Desant…' : 'Desar la contrasenya' }}</button>
         </form>
@@ -353,6 +353,7 @@ import { mdiCar, mdiCheck, mdiLock, mdiFileDocument, mdiAlert, mdiEmail } from '
 
 const router = useRouter();
 const route = useRoute();
+const safeRedirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') && !route.query.redirect.startsWith('//') ? route.query.redirect : null;
 const authStore = useAuthStore();
 const registrationStore = useRegistrationStore();
 
@@ -535,9 +536,9 @@ const handleLogin = async () => {
   if (authStore.userRole === 'admin') {
     router.push('/admin/registrations');
   } else if (authStore.userRole === 'driver') {
-    router.push(route.query.redirect || '/driver-dashboard');
+    router.push(safeRedirect || '/driver-dashboard');
   } else {
-    router.push(route.query.redirect || '/planification');
+    router.push(safeRedirect || '/planification');
   }
 };
 
