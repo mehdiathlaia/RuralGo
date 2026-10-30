@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 
+const API_URL = 'https://ruralgo-backend-ighg.onrender.com/api';
+
 export const useRegistrationStore = defineStore('registration', () => {
   const pendingRequests = ref([]);
   const approvedUsers = ref([]);
