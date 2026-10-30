@@ -5,7 +5,7 @@
       class="hamburger-btn"
       :class="{ active: isOpen }"
       @click="toggleMenu"
-      aria-label="Menú"
+      aria-label="Menú principal"
       title="Menú de navegació"
     >
       <span></span>
