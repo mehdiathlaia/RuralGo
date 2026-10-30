@@ -1,7 +1,7 @@
 <template>
   <div class="services-page">
     <div class="header">
-      <h1><svg class="title-icon" viewBox="0 0 24 24"><path :d="mdiTarget" fill="currentColor" /></svg> Serveis RURAL-GO VIVA</h1>
+      <h1><svg class="title-icon" viewBox="0 0 24 24"><path :d="mdiTarget" fill="currentColor" /></svg> Serveis de RuralGo</h1>
       <p>Descobreix tots els serveis disponibles a RuralGo</p>
     </div>
 
