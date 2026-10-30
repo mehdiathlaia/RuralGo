@@ -4,6 +4,8 @@
     <div class="admin-header">
       <h1>🔧 Panel d'Administració</h1>
       <div class="admin-actions">
+        <span class="admin-session">{{ registrationStore.adminEmail }}</span>
+        <button type="button" class="btn-export" @click="registrationStore.adminLogout()">Tancar sessió</button>
         <span v-if="adminStore.platformSettings.maintenanceMode" class="maintenance-badge" role="status" aria-live="polite">
           🔴 Mode Manteniment Actiu
         </span>
