@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const User = require('./models/User');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -14,6 +17,11 @@ const registrationSchema = new mongoose.Schema({
   email: { type: String, required: true, trim: true, lowercase: true },
   phone: { type: String, required: true },
   dni: String,
+  healthCard: String,
+  emergencyContact: String,
+  emergencyPhone: String,
+  vehicleType: String,
+  insurance: String,
   rejectionReason: String,
   reviewedAt: Date,
   reviewedBy: String,
@@ -60,21 +68,93 @@ app.post('/api/admin/login', (req, res) => {
   return res.json({ token, email: process.env.ADMIN_EMAIL });
 });
 
+const createMailer = () => {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS || !process.env.SMTP_FROM) return null;
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: String(process.env.SMTP_SECURE || 'false') === 'true',
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+  });
+};
+
+async function sendDecisionEmail(to, subject, text) {
+  const mailer = createMailer();
+  if (!mailer) return false;
+  await mailer.sendMail({ from: process.env.SMTP_FROM, to, subject, text });
+  return true;
+}
+
 app.patch('/api/registration-requests/:id', requireAdmin, async (req, res) => {
   try {
     const status = (req.body || {}).status;
-    if (!['approved', 'rejected'].includes(status)) return res.status(400).json({ message: 'Estado no válido' });
-    const update = { status, reviewedAt: new Date(), reviewedBy: req.adminEmail };
-    if (status === 'rejected') update.rejectionReason = String((req.body || {}).rejectionReason || '').trim();
-    const request = await Registration.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true }).select('-__v');
-    if (!request) return res.status(404).json({ message: 'Solicitud no encontrada' });
-    return res.json({ message: 'Solicitud actualizada', request });
-  } catch (error) { return res.status(500).json({ message: 'No se pudo actualizar la solicitud' }); }
+    const reason = String((req.body || {}).rejectionReason || '').trim();
+    if (!['approved', 'rejected'].includes(status)) return res.status(400).json({ message: 'Estado no vàlid' });
+    if (status === 'rejected' && !reason) return res.status(400).json({ message: 'Cal indicar el motiu del rebuig' });
+
+    const request = await Registration.findById(req.params.id);
+    if (!request) return res.status(404).json({ message: 'Sol·licitud no trobada' });
+    if (request.status !== 'pending') return res.status(409).json({ message: 'Aquesta sol·licitud ja ha estat revisada' });
+
+    let emailSent = false;
+    let accountCreated = false;
+    let temporaryPassword = '';
+
+    if (status === 'approved') {
+      const existingUser = await User.findOne({ email: request.email });
+      if (existingUser) return res.status(409).json({ message: 'Ja existeix un compte amb aquest correu' });
+      temporaryPassword = crypto.randomBytes(9).toString('base64url') + 'A1!';
+      const user = new User({
+        name: request.name,
+        email: request.email,
+        password: temporaryPassword,
+        phone: request.phone,
+        role: request.userType === 'driver' ? 'driver' : 'passenger'
+      });
+      await user.save();
+      accountCreated = true;
+      try {
+        emailSent = await sendDecisionEmail(
+          request.email,
+          'RURAL-GO: sol·licitud aprovada',
+          `Hola ${request.name},\n\nLa teva sol·licitud ha estat aprovada. Ja pots iniciar sessió amb:\nCorreu: ${request.email}\nContrasenya temporal: ${temporaryPassword}\n\nCanvia la contrasenya tan aviat com sigui possible.\n\nEquip RURAL-GO`
+        );
+      } catch (mailError) {
+        console.error('Approval email failed:', mailError.message);
+      }
+    } else {
+      try {
+        emailSent = await sendDecisionEmail(
+          request.email,
+          'RURAL-GO: resolució de la sol·licitud',
+          `Hola ${request.name},\n\nLa teva sol·licitud no ha estat aprovada. Motiu: ${reason}\n\nSi necessites més informació, contacta amb l'equip de RURAL-GO.`
+        );
+      } catch (mailError) {
+        console.error('Rejection email failed:', mailError.message);
+      }
+    }
+
+    request.status = status;
+    request.reviewedAt = new Date();
+    request.reviewedBy = req.adminEmail;
+    if (status === 'rejected') request.rejectionReason = reason;
+    await request.save();
+
+    return res.json({
+      message: status === 'approved' ? 'Sol·licitud aprovada i compte creat' : 'Sol·licitud rebutjada',
+      request,
+      accountCreated,
+      emailSent
+    });
+  } catch (error) {
+    console.error('Registration review error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut processar la sol·licitud' });
+  }
 });
 
 app.post('/api/registration-requests', async (req, res) => {
   try {
-    const { userType, name, email, phone, dni, address, postalCode, city, birthDate, licenseNumber, licenseExpiry, comments } = req.body;
+    const { userType, name, email, phone, dni, address, postalCode, city, birthDate, licenseNumber, licenseExpiry, comments, healthCard, emergencyContact, emergencyPhone, vehicleType, insurance } = req.body;
     if (!userType || !name || !email || !phone) {
       return res.status(400).json({ message: 'Falten camps obligatoris' });
     }
@@ -87,7 +167,7 @@ app.post('/api/registration-requests', async (req, res) => {
 
     const request = await Registration.create({
       userType, name, email: normalizedEmail, phone, dni, address, postalCode, city,
-      birthDate, licenseNumber, licenseExpiry, comments
+      birthDate, licenseNumber, licenseExpiry, comments, healthCard, emergencyContact, emergencyPhone, vehicleType, insurance
     });
     return res.status(201).json({
       message: 'Sol·licitud desada correctament',
