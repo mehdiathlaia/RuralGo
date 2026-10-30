@@ -1,10 +1,10 @@
 <template>
-  <div v-if="!registrationStore.adminAuthenticated" class="admin-panel"><form @submit.prevent="loginAdmin"><h1>Administració</h1><input v-model="adminCorreu electrònicInput" type="email" placeholder="Correo" required><input v-model="adminPasswordInput" type="password" placeholder="Contraseña" required><p>{{ adminLoginError }}</p><button type="submit" :disabled="adminLoginLoading">Accedir</button></form></div>
+  <div v-if="!registrationStore.adminAuthenticated" class="admin-panel"><form @submit.prevent="loginAdmin"><h1>Administració</h1><input v-model="adminEmailInput" type="email" placeholder="Correu electrònic" required><input v-model="adminPasswordInput" type="password" placeholder="Contrasenya" required><p>{{ adminLoginError }}</p><button type="submit" :disabled="adminLoginLoading">Accedir</button></form></div>
   <div v-else class="admin-panel" role="main" aria-label="Panel d'administració principal">
     <div class="admin-header">
       <h1>🔧 Panell d’administració</h1>
       <div class="admin-actions">
-        <span class="admin-session">{{ registrationStore.adminCorreu electrònic }}</span>
+        <span class="admin-session">{{ registrationStore.adminEmail }}</span>
         <button type="button" class="btn-export" @click="registrationStore.adminLogout()">Tanca la sessió</button>
         <span v-if="adminStore.platformSettings.maintenanceMode" class="maintenance-badge" role="status" aria-live="polite">
           🔴 Mode Manteniment Actiu
@@ -811,11 +811,11 @@ const banReason = ref('');
 const rejectionReason = ref('');
 
 const pendingRequests = computed(() => registrationStore.getPendingRequests);
-const adminCorreu electrònicInput = ref('');
+const adminEmailInput = ref('');
 const adminPasswordInput = ref('');
 const adminLoginError = ref('');
 const adminLoginLoading = ref(false);
-const loginAdmin = async () => { adminLoginLoading.value = true; adminLoginError.value = ''; try { await registrationStore.adminLogin(adminCorreu electrònicInput.value, adminPasswordInput.value); await registrationStore.loadRegistrationRequests(); } catch (error) { adminLoginError.value = error.message; } finally { adminLoginLoading.value = false; } };
+const loginAdmin = async () => { adminLoginLoading.value = true; adminLoginError.value = ''; try { await registrationStore.adminLogin(adminEmailInput.value, adminPasswordInput.value); await registrationStore.loadRegistrationRequests(); } catch (error) { adminLoginError.value = error.message; } finally { adminLoginLoading.value = false; } };
 
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('ca-ES', {
