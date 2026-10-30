@@ -46,12 +46,12 @@
 
         <!-- Quick Links -->
         <div class="footer-section">
-          <h4>Ràpids</h4>
+          <h4>Àgils</h4>
           <ul class="footer-links">
             <li><router-link to="/">Inici</router-link></li>
             <li><router-link to="/login">Inicia la sessió</router-link></li>
             <li><a href="#privacy">Privacitat</a></li>
-            <li><a href="#terms">Termes i Condicions</a></li>
+            <li><a href="#terms">Termes i condicions</a></li>
             <li><a href="#contact">Contacte</a></li>
           </ul>
         </div>
@@ -102,7 +102,7 @@
 
     <!-- Bottom Bar -->
     <div class="footer-bottom">
-      <p>&copy; 2024 RURAL-GO VIVA. Tots els drets reservats.</p>
+      <p>&copy; 2026 RURAL-GO VIVA. Tots els drets reservats.</p>
       <div class="footer-badges">
         <span class="badge">🌱 Mobilitat Sostenible</span>
         <span class="badge">♿ Accessible</span>
