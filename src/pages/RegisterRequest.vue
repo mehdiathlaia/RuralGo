@@ -218,12 +218,12 @@
 
         <!-- Botons -->
         <div class="form-actions">
-          <router-link to="/login" class="btn btn-secondary">
-            Enrere
-          </router-link>
           <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
             {{ isSubmitting ? 'Enviant...' : 'Enviar Sol·licitud' }}
           </button>
+          <router-link to="/login" class="btn btn-secondary">
+            Enrere
+          </router-link>
         </div>
       </form>
 
@@ -294,7 +294,7 @@ const submitRequest = async () => {
 
   try {
     // Crear sol·licitud
-    const request = registrationStore.createRegistrationRequest({
+    const request = await registrationStore.createRegistrationRequest({
       userType: form.value.userType,
       name: form.value.name,
       email: form.value.email,
