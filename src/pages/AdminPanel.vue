@@ -887,16 +887,19 @@ const saveEditedUser = () => {
 
 const approveRegistration = async (request) => { try { await registrationStore.updateRegistrationStatus(request.id, 'approved'); adminStore.logAction('APPROVE_REGISTRATION', 'Solicitud aprobada: ' + request.name); } catch (error) { alert(error.message); } };
 
-const rejectRegistration = () => {
+const rejectRegistration = async () => {
   if (!rejectionReason.value.trim()) {
     alert('Si us plau, proporciona un motiu');
     return;
   }
   if (selectedRequest.value) {
-    registrationStore.updateRegistrationStatus(selectedRequest.value.id, 'rejected', rejectionReason.value).catch(error => alert(error.message));
-    adminStore.logAction('REJECT_REGISTRATION', `Sol·licitud rebutjada: ${selectedRequest.value.name} - ${rejectionReason.value}`);
-    showRejectDialog.value = false;
-    selectedRequest.value = null;
+    try {
+      await registrationStore.updateRegistrationStatus(selectedRequest.value.id, 'rejected', rejectionReason.value);
+      adminStore.logAction('REJECT_REGISTRATION', `Sol·licitud rebutjada: ${selectedRequest.value.name} - ${rejectionReason.value}`);
+      showRejectDialog.value = false;
+      selectedRequest.value = null;
+      rejectionReason.value = '';
+    } catch (error) { alert(error.message || 'No se pudo rechazar la solicitud'); }
   }
 };
 
