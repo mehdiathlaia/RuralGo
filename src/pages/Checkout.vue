@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="header">
       <button @click="goBack" class="back-btn">← Enrere</button>
-      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Pagament del Viatge</h1>
+      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Pagament del viatge</h1>
     </div>
 
     <div class="checkout-content">
@@ -29,7 +29,7 @@
 
       <!-- Step 1: Summary -->
       <div v-if="currentStep === 1" class="step-content">
-        <h2>Resum del Viatge</h2>
+        <h2>Resum del viatge</h2>
 
         <div class="trip-summary">
           <div class="summary-section">
@@ -82,13 +82,13 @@
         </div>
 
         <div class="step-actions">
-          <button @click="currentStep = 2" class="btn btn-primary">Continuar → Pagament</button>
+          <button @click="currentStep = 2" class="btn btn-primary">Continua → Pagament</button>
         </div>
       </div>
 
       <!-- Step 2: Payment -->
       <div v-if="currentStep === 2" class="step-content">
-        <h2>Mètode de Pagament</h2>
+        <h2>Mètode de pagament</h2>
 
         <div class="payment-methods-selection">
           <div 
@@ -113,18 +113,18 @@
 
         <div class="step-actions">
           <button @click="currentStep = 1" class="btn btn-secondary">← Enrere</button>
-          <button @click="currentStep = 3" class="btn btn-primary">Continuar → Revisió</button>
+          <button @click="currentStep = 3" class="btn btn-primary">Continua → Revisió</button>
         </div>
       </div>
 
       <!-- Step 3: Confirmation -->
       <div v-if="currentStep === 3" class="step-content">
-        <h2>Revisió Final</h2>
+        <h2>Revisió final</h2>
 
         <div class="price-breakdown">
-          <h3><svg class="section-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Desglosament</h3>
+          <h3><svg class="section-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Desglossament</h3>
           <div class="breakdown-row">
-            <span>Tarifa Base:</span>
+            <span>Tarifa base:</span>
             <span>€3.50</span>
           </div>
           <div class="breakdown-row">
@@ -132,7 +132,7 @@
             <span>€4.42</span>
           </div>
           <div class="breakdown-row">
-            <span>Recàrrec Vehicle Adaptat:</span>
+            <span>Suplement per vehicle adaptat:</span>
             <span>€2.50</span>
           </div>
           <div class="breakdown-row total">
@@ -142,7 +142,7 @@
         </div>
 
         <div class="selected-method">
-          <h3><svg class="section-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Pagament: <svg class="inline-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Targeta Crèdit</h3>
+          <h3><svg class="section-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Pagament: <svg class="inline-icon" viewBox="0 0 24 24"><path :d="mdiCreditCard" fill="currentColor" /></svg> Targeta de crèdit</h3>
           <p>**** **** **** 1234</p>
         </div>
 
@@ -165,11 +165,11 @@
       <div v-if="paymentSuccess" class="success-overlay">
         <div class="success-box">
           <div class="success-icon"><svg viewBox="0 0 24 24"><path :d="mdiCheckCircle" fill="currentColor" /></svg></div>
-          <h2>Pagament Completat!</h2>
+          <h2>Pagament completat!</h2>
           <p>Confirmació: <strong>#{{ confirmationCode }}</strong></p>
           <p class="subtitle">El viatge s'ha assignat. Rebràs actualitzacions en temps real.</p>
           <button @click="goToDashboard" class="btn btn-primary">
-            <svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCar" fill="currentColor" /></svg> Veure Viatge
+            <svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCar" fill="currentColor" /></svg> Mostra el viatge
           </button>
         </div>
       </div>
@@ -191,7 +191,7 @@ const confirmationCode = ref('');
 const showAddCard = ref(false);
 
 const paymentMethods = ref([
-  { id: 1, name: 'Targeta Crèdit', icon: 'credit-card', detail: '**** **** **** 1234 (05/26)' },
+  { id: 1, name: 'Targeta de crèdit', icon: 'credit-card', detail: '**** **** **** 1234 (05/26)' },
   { id: 2, name: 'Targeta Dèbit', icon: 'credit-card', detail: '**** **** **** 5678 (08/25)' },
   { id: 3, name: 'PayPal', icon: 'paypal', detail: 'joan@example.com' },
   { id: 4, name: 'Apple Pay', icon: 'apple', detail: 'Configurat' }
