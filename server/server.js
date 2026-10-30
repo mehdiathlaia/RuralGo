@@ -5,11 +5,13 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('./models/User');
 const nodemailer = require('nodemailer');
+const tripRoutes = require('./routes/trips');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '1mb' }));
+app.use('/api/trips', tripRoutes);
 
 const registrationSchema = new mongoose.Schema({
   userType: { type: String, enum: ['client', 'driver'], required: true },
