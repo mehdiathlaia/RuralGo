@@ -1,8 +1,8 @@
 <template>
   <div class="history-page">
     <div class="header">
-      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> Historial de Viatges</h1>
-      <p>Consulta tots els teus viatges realitzats</p>
+      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> Historial de viatges</h1>
+      <p>Consulta tots els viatges que has fet</p>
     </div>
 
     <!-- Filters -->
@@ -34,26 +34,26 @@
         </select>
       </div>
 
-      <button @click="applyFilters" class="btn-filter">Filtrar</button>
-      <button @click="clearFilters" class="btn-clear">Netejar</button>
+      <button @click="applyFilters" class="btn-filter">Filtra</button>
+      <button @click="clearFilters" class="btn-clear">Esborra els filtres</button>
     </div>
 
     <!-- Statistics -->
     <div class="statistics-grid">
       <div class="stat-card">
-        <span class="stat-label">Total Viatges</span>
+        <span class="stat-label">Viatges totals</span>
         <span class="stat-value">{{ statistics.totalTrips }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Valoració Mitjana</span>
+        <span class="stat-label">Valoració mitjana</span>
         <span class="stat-value"><svg class="stat-icon" viewBox="0 0 24 24"><path :d="mdiStar" fill="currentColor" /></svg> {{ statistics.averageRating }}/5</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Km Recorreguts</span>
+        <span class="stat-label">Quilòmetres recorreguts</span>
         <span class="stat-value">{{ statistics.totalKm }} km</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Viatges Aquest Mes</span>
+        <span class="stat-label">Viatges d’aquest mes</span>
         <span class="stat-value">{{ statistics.tripsThisMonth }}</span>
       </div>
     </div>
@@ -83,7 +83,7 @@
 
         <div class="trip-details">
           <div class="detail">
-            <span class="label">Pickup:</span>
+            <span class="label">Punt de recollida:</span>
             <span class="value">{{ trip.pickup }}</span>
           </div>
           <div class="detail">
@@ -105,7 +105,7 @@
         </div>
 
         <div class="trip-footer">
-          <button class="btn-details" @click.stop="viewDetails(trip)">Veure Detalls</button>
+          <button class="btn-details" @click.stop="viewDetails(trip)">Mostra els detalls</button>
         </div>
       </div>
     </div>
@@ -114,14 +114,14 @@
     <div v-if="selectedTrip" class="modal-overlay" @click.self="selectedTrip = null">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Detalls del Viatge</h2>
+          <h2>Detalls del viatge</h2>
           <button class="close-btn" @click="selectedTrip = null">✕</button>
         </div>
 
         <div class="modal-body">
           <!-- Basic Info -->
           <div class="section">
-            <h3>Informació General</h3>
+            <h3>Informació general</h3>
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Servei:</span>
@@ -132,11 +132,11 @@
                 <span class="value">{{ formatDate(selectedTrip.createdAt) }}</span>
               </div>
               <div class="info-item">
-                <span class="label">Tipus Vehicle:</span>
+                <span class="label">Tipus de vehicle:</span>
                 <span class="value">{{ getVehicleType(selectedTrip.vehicleType) }}</span>
               </div>
               <div class="info-item">
-                <span class="label">Estat Final:</span>
+                <span class="label">Estat final:</span>
                 <span class="value" :class="selectedTrip.finalState">
                   <svg v-if="selectedTrip.finalState === 'ok'" class="status-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg>
                   <svg v-else class="status-icon" viewBox="0 0 24 24"><path :d="mdiAlert" fill="currentColor" /></svg>
@@ -153,14 +153,14 @@
               <div class="route-item">
                 <svg class="route-icon" viewBox="0 0 24 24"><path :d="mdiMapMarker" fill="currentColor" /></svg>
                 <div>
-                  <span class="label">Pickup:</span>
+                  <span class="label">Punt de recollida:</span>
                   <span class="value">{{ selectedTrip.pickup }}</span>
                 </div>
               </div>
               <div class="route-item">
                 <svg class="route-icon" viewBox="0 0 24 24"><path :d="mdiTarget" fill="currentColor" /></svg>
                 <div>
-                  <span class="label">Destí:</span>
+                  <span class="label">Destinació:</span>
                   <span class="value">{{ selectedTrip.destination || 'No especificat' }}</span>
                 </div>
               </div>
