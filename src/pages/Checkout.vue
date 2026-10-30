@@ -36,11 +36,11 @@
             <h3><svg class="section-icon" viewBox="0 0 24 24"><path :d="mdiMapMarker" fill="currentColor" /></svg> Ruta</h3>
             <div class="summary-row">
               <span class="label">Origen:</span>
-              <span class="value">Carrer Principal, 123</span>
+              <span class="value">Adreça d’origen</span>
             </div>
             <div class="summary-row">
               <span class="label">Destí:</span>
-              <span class="value">Hospital Clínic</span>
+              <span class="value">Centre de destinació</span>
             </div>
             <div class="summary-row">
               <span class="label">Distància:</span>
@@ -56,7 +56,7 @@
             <h3><svg class="section-icon" viewBox="0 0 24 24"><path :d="mdiTarget" fill="currentColor" /></svg> Servei</h3>
             <div class="summary-row">
               <span class="label">Tipus:</span>
-              <span class="value">Serveis Sanitaris</span>
+              <span class="value">Servei de transport sanitari</span>
             </div>
             <div class="summary-row">
               <span class="label">Vehicle:</span>
@@ -64,7 +64,7 @@
             </div>
             <div class="summary-row">
               <span class="label">Camí:</span>
-              <span class="value urban">Via urbana</span>
+              <span class="value urban">Ruta urbana</span>
             </div>
           </div>
 
@@ -73,9 +73,9 @@
             <div class="driver-card">
               <div class="driver-avatar"><svg viewBox="0 0 24 24"><path :d="mdiAccountCircle" fill="currentColor" /></svg></div>
               <div class="driver-details">
-                <h4>Maria López García</h4>
+                <h4>Conductor assignat</h4>
                 <p><svg class="inline-icon" viewBox="0 0 24 24"><path :d="mdiStar" fill="currentColor" /></svg> 4.9/5 (287 valoracions)</p>
-                <p><svg class="inline-icon" viewBox="0 0 24 24"><path :d="mdiCar" fill="currentColor" /></svg> Mercedes Vito Adapted</p>
+                <p><svg class="inline-icon" viewBox="0 0 24 24"><path :d="mdiCar" fill="currentColor" /></svg> Vehicle adaptat</p>
               </div>
             </div>
           </div>
