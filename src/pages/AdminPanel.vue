@@ -1,11 +1,11 @@
 <template>
-  <div v-if="!registrationStore.adminAuthenticated" class="admin-panel"><form @submit.prevent="loginAdmin"><h1>Administración</h1><input v-model="adminEmailInput" type="email" placeholder="Correo" required><input v-model="adminPasswordInput" type="password" placeholder="Contraseña" required><p>{{ adminLoginError }}</p><button type="submit" :disabled="adminLoginLoading">Entrar</button></form></div>
+  <div v-if="!registrationStore.adminAuthenticated" class="admin-panel"><form @submit.prevent="loginAdmin"><h1>Administració</h1><input v-model="adminCorreu electrònicInput" type="email" placeholder="Correo" required><input v-model="adminPasswordInput" type="password" placeholder="Contraseña" required><p>{{ adminLoginError }}</p><button type="submit" :disabled="adminLoginLoading">Accedir</button></form></div>
   <div v-else class="admin-panel" role="main" aria-label="Panel d'administració principal">
     <div class="admin-header">
-      <h1>🔧 Panel d'Administració</h1>
+      <h1>🔧 Panell d’administració</h1>
       <div class="admin-actions">
-        <span class="admin-session">{{ registrationStore.adminEmail }}</span>
-        <button type="button" class="btn-export" @click="registrationStore.adminLogout()">Tancar sessió</button>
+        <span class="admin-session">{{ registrationStore.adminCorreu electrònic }}</span>
+        <button type="button" class="btn-export" @click="registrationStore.adminLogout()">Tanca la sessió</button>
         <span v-if="adminStore.platformSettings.maintenanceMode" class="maintenance-badge" role="status" aria-live="polite">
           🔴 Mode Manteniment Actiu
         </span>
@@ -103,7 +103,7 @@
         <div class="stat-card">
           <div class="stat-icon">👥</div>
           <div class="stat-content">
-            <h3>Usuaris Totals</h3>
+            <h3>Usuaris totals</h3>
             <p class="stat-number">{{ adminStore.getUserStats.total }}</p>
             <p class="stat-detail">{{ adminStore.getUserStats.clients }} clients, {{ adminStore.getUserStats.drivers }} conductors</p>
           </div>
@@ -112,7 +112,7 @@
         <div class="stat-card">
           <div class="stat-icon">✅</div>
           <div class="stat-content">
-            <h3>Usuaris Actius</h3>
+            <h3>Usuaris actius</h3>
             <p class="stat-number">{{ adminStore.getUserStats.active }}</p>
             <p class="stat-detail">{{ adminStore.getUserStats.inactive }} inactius</p>
           </div>
@@ -121,7 +121,7 @@
         <div class="stat-card">
           <div class="stat-icon">🚗</div>
           <div class="stat-content">
-            <h3>Viatges Totals</h3>
+            <h3>Viatges totals</h3>
             <p class="stat-number">{{ adminStore.getTripStats.total }}</p>
             <p class="stat-detail">{{ adminStore.getTripStats.active }} en curs</p>
           </div>
@@ -130,9 +130,9 @@
         <div class="stat-card">
           <div class="stat-icon">💰</div>
           <div class="stat-content">
-            <h3>Ingressos Totals</h3>
+            <h3>Ingressos totals</h3>
             <p class="stat-number">€{{ adminStore.getTripStats.totalRevenue }}</p>
-            <p class="stat-detail">Rating mitjà: {{ adminStore.getTripStats.averageRating }}⭐</p>
+            <p class="stat-detail">Valoració mitjà: {{ adminStore.getTripStats.averageValoració }}⭐</p>
           </div>
         </div>
       </div>
@@ -141,7 +141,7 @@
     <!-- USERS TAB -->
     <div v-if="activeTab === 'users'" class="tab-content">
       <div class="users-header">
-        <h2>Gestió d'Usuaris</h2>
+        <h2>Gestió d’usuaris</h2>
         <div class="users-controls">
           <input 
             v-model="adminStore.filter.searchTerm"
@@ -167,17 +167,17 @@
             <option value="all">Tots els estats</option>
             <option value="active">Actius</option>
             <option value="inactive">Inactius</option>
-            <option value="banned">Baneats</option>
+            <option value="banned">Bloquejats</option>
           </select>
           <select 
             v-model="adminStore.filter.sortBy"
             @change="adminStore.setSortBy(adminStore.filter.sortBy)"
             class="filter-select"
           >
-            <option value="name">Ordenar per nom</option>
+            <option value="name">Ordena per nom</option>
             <option value="createdAt">Més recents</option>
-            <option value="trips">Per viatges</option>
-            <option value="rating">Per rating</option>
+            <option value="trips">Per nombre de viatges</option>
+            <option value="rating">Per valoració</option>
           </select>
           <button @click="adminStore.exportUsersToCSV()" class="btn btn-export">
             📥 Exportar CSV
@@ -186,7 +186,7 @@
       </div>
 
       <div v-if="adminStore.getFilteredUsers.length === 0" class="empty-state">
-        <p>No s'han trobat usuaris</p>
+        <p>No s’han trobat usuaris</p>
       </div>
 
       <div v-else class="users-table">
@@ -194,11 +194,11 @@
           <thead>
             <tr>
               <th>Nom</th>
-              <th>Email</th>
+              <th>Correu electrònic</th>
               <th>Telèfon</th>
               <th>Tipus</th>
               <th>Viatges</th>
-              <th>Rating</th>
+              <th>Valoració</th>
               <th>Estat</th>
               <th>Accions</th>
             </tr>
@@ -216,7 +216,7 @@
               <td>{{ user.tripHistory?.length || 0 }}</td>
               <td>{{ user.rating || '-' }}⭐</td>
               <td>
-                <span v-if="user.isBanned" class="badge badge-banned">Banejat</span>
+                <span v-if="user.isBanned" class="badge badge-banned">Bloquejat</span>
                 <span v-else-if="!user.isActive" class="badge badge-inactive">Inactiu</span>
                 <span v-else class="badge badge-active">Actiu</span>
               </td>
@@ -232,7 +232,7 @@
                     <button class="btn-small">⋮</button>
                     <div class="dropdown-content">
                       <button v-if="!user.isBanned" @click="banUserAction(user)" class="dropdown-item danger">
-                        🚫 Banear
+                        🚫 Bloqueja
                       </button>
                       <button v-if="user.isBanned" @click="unbanUserAction(user)" class="dropdown-item">
                         ✅ Desbanear
@@ -259,7 +259,7 @@
     <!-- TRIPS TAB -->
     <div v-if="activeTab === 'trips'" class="tab-content">
       <div class="trips-header">
-        <h2>Gestió de Viatges</h2>
+        <h2>Gestió de viatges</h2>
         <button @click="adminStore.exportTripsToCSV()" class="btn btn-export">
           📥 Exportar CSV
         </button>
@@ -280,7 +280,7 @@
               <th>Distància</th>
               <th>Durada</th>
               <th>Estat</th>
-              <th>Rating</th>
+              <th>Valoració</th>
               <th>Data</th>
             </tr>
           </thead>
@@ -307,7 +307,7 @@
 
     <!-- REGISTRATIONS TAB -->
     <div v-if="activeTab === 'registrations'" class="tab-content">
-      <h2>Sol·licituds de Registre Pendents</h2>
+      <h2>Sol·licituds d’alta pendents</h2>
       
       <div v-if="pendingRequests.length === 0" class="empty-state">
         <p>No hi ha sol·licituds pendents</p>
@@ -338,10 +338,10 @@
 
     <!-- DRIVERS TAB -->
     <div v-if="activeTab === 'drivers'" class="tab-content">
-      <h2>Gestió de Conductors</h2>
+      <h2>Gestió de conductors</h2>
       
       <div class="drivers-header">
-        <h3>Performance dels Conductors</h3>
+        <h3>Rendiment dels conductors</h3>
       </div>
 
       <div v-if="adminStore.allUsers.filter(u => u.role === 'driver').length === 0" class="empty-state">
@@ -358,7 +358,7 @@
           <div class="driver-info">
             <p><strong>Vehicle:</strong> {{ driver.vehicle || '-' }}</p>
             <p><strong>Matrícula:</strong> {{ driver.plate || '-' }}</p>
-            <p><strong>Email:</strong> {{ driver.email }}</p>
+            <p><strong>Correu electrònic:</strong> {{ driver.email }}</p>
             <p><strong>Telèfon:</strong> {{ driver.phone || '-' }}</p>
           </div>
 
@@ -372,11 +372,11 @@
               <span class="stat-value">{{ getDriverStats(driver.id).completed }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Cancelled</span>
+              <span class="stat-label">Cancel·lats</span>
               <span class="stat-value">{{ getDriverStats(driver.id).cancelled }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Guanys</span>
+              <span class="stat-label">Ingressos</span>
               <span class="stat-value">€{{ getDriverStats(driver.id).earnings.toFixed(2) }}</span>
             </div>
           </div>
@@ -395,14 +395,14 @@
 
     <!-- ANALYTICS TAB -->
     <div v-if="activeTab === 'analytics'" class="tab-content">
-      <h2>Estadístiques i Reportes</h2>
+      <h2>Estadístiques i informes</h2>
       
       <div class="analytics-section">
-        <h3>KPIs Principals</h3>
+        <h3>Indicadors principals</h3>
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-value">{{ analyticsDashboard.users.total }}</div>
-            <div class="kpi-label">Usuaris Totals</div>
+            <div class="kpi-label">Usuaris totals</div>
             <div class="kpi-detail">{{ analyticsDashboard.users.drivers }} conductors, {{ analyticsDashboard.users.clients }} clients</div>
           </div>
 
@@ -414,20 +414,20 @@
 
           <div class="kpi-card">
             <div class="kpi-value">€{{ analyticsDashboard.revenue.total }}</div>
-            <div class="kpi-label">Ingressos Totals</div>
+            <div class="kpi-label">Ingressos totals</div>
             <div class="kpi-detail">Comissió: €{{ analyticsDashboard.revenue.commission }}</div>
           </div>
 
           <div class="kpi-card">
             <div class="kpi-value">{{ analyticsDashboard.ratings.average }}⭐</div>
-            <div class="kpi-label">Rating Mitjà</div>
+            <div class="kpi-label">Valoració Mitjà</div>
             <div class="kpi-detail">{{ analyticsDashboard.trips.completed }} viatges valorats</div>
           </div>
         </div>
       </div>
 
       <div class="analytics-section">
-        <h3>Top 5 Conductors</h3>
+        <h3>Els 5 millors conductors</h3>
         <div v-if="analyticsDashboard.drivers.topDrivers.length === 0" class="empty-state">
           <p>No hi ha dades de conductors</p>
         </div>
@@ -437,8 +437,8 @@
               <tr>
                 <th>Conductor</th>
                 <th>Viatges</th>
-                <th>Guanys</th>
-                <th>Rating</th>
+                <th>Ingressos</th>
+                <th>Valoració</th>
               </tr>
             </thead>
             <tbody>
@@ -454,12 +454,12 @@
       </div>
 
       <div class="analytics-section">
-        <h3>Distribució de Ratings</h3>
+        <h3>Distribució de Valoraciós</h3>
         <div class="rating-distribution">
           <div v-for="(count, rating) in analyticsDashboard.ratings.distribution" :key="rating" class="rating-bar">
             <span class="rating-label">{{ rating }}⭐</span>
             <div class="bar">
-              <div class="fill" :style="{ width: getRatingBarWidth(count) + '%' }"></div>
+              <div class="fill" :style="{ width: getValoracióBarWidth(count) + '%' }"></div>
             </div>
             <span class="count">{{ count }}</span>
           </div>
@@ -468,7 +468,7 @@
     </div>
 
     <div v-if="activeTab === 'audit'" class="tab-content">
-      <h2>Registre d'Auditoria</h2>
+      <h2>Registre d’auditoria</h2>
 
       <div v-if="adminStore.getAuditLog.length === 0" class="empty-state">
         <p>No hi ha accions registrades</p>
@@ -478,7 +478,7 @@
         <table>
           <thead>
             <tr>
-              <th>Data/Hora</th>
+              <th>Data i hora</th>
               <th>Acció</th>
               <th>Descripció</th>
               <th>Admin ID</th>
@@ -500,11 +500,11 @@
 
     <!-- SETTINGS TAB -->
     <div v-if="activeTab === 'settings'" class="tab-content">
-      <h2>Configuració de la Plataforma</h2>
+      <h2>Configuració de la plataforma</h2>
 
       <div class="settings-container">
         <div class="settings-section">
-          <h3>Configuració General</h3>
+          <h3>Configuració general</h3>
           
           <div class="setting-item">
             <label>Percentatge de Comissió (%)</label>
@@ -538,11 +538,11 @@
           </div>
 
           <div class="setting-item">
-            <label>Email de Suport</label>
+            <label>Correu electrònic de Suport</label>
             <input 
-              v-model="adminStore.platformSettings.supportEmail"
+              v-model="adminStore.platformSettings.supportCorreu electrònic"
               type="email"
-              @change="adminStore.updatePlatformSetting('supportEmail', adminStore.platformSettings.supportEmail)"
+              @change="adminStore.updatePlatformSetting('supportCorreu electrònic', adminStore.platformSettings.supportCorreu electrònic)"
             >
           </div>
 
@@ -557,7 +557,7 @@
         </div>
 
         <div class="settings-section">
-          <h3>Mode de Manteniment</h3>
+          <h3>Mode de manteniment</h3>
           <p class="setting-description">Activa el mode de manteniment per restringir l'accés a la plataforma</p>
           
           <div class="setting-item">
@@ -567,7 +567,7 @@
                 type="checkbox"
                 @change="toggleMaintenanceMode"
               >
-              <span>Mode de Manteniment Actiu</span>
+              <span>Mode de manteniment Actiu</span>
             </label>
             <p v-if="adminStore.platformSettings.maintenanceMode" class="warning">
               ⚠️ La plataforma està en mode de manteniment. Els usuaris no podran accedir.
@@ -576,7 +576,7 @@
         </div>
 
         <div class="settings-section danger">
-          <h3>Accions Perilloses</h3>
+          <h3>Accions perilloses</h3>
           <p class="setting-description">Aquestes accions no es poden desfer</p>
           
           <button @click="confirmClearAllData" class="btn btn-danger-full">
@@ -594,14 +594,14 @@
         <h3>{{ adminStore.selectedUser.name }}</h3>
         <div class="detail-content">
           <div class="detail-section">
-            <h4>Informació Bàsica</h4>
+            <h4>Informació bàsica</h4>
             <div class="detail-grid">
               <div class="detail-item">
                 <label>Nom:</label>
                 <p>{{ adminStore.selectedUser.name }}</p>
               </div>
               <div class="detail-item">
-                <label>Email:</label>
+                <label>Correu electrònic:</label>
                 <p>{{ adminStore.selectedUser.email }}</p>
               </div>
               <div class="detail-item">
@@ -619,27 +619,27 @@
             <h4>Estadístiques</h4>
             <div class="detail-grid">
               <div class="detail-item">
-                <label>Viatges Totals:</label>
+                <label>Viatges totals:</label>
                 <p>{{ adminStore.selectedUser.tripHistory?.length || 0 }}</p>
               </div>
               <div class="detail-item">
-                <label>Rating:</label>
+                <label>Valoració:</label>
                 <p>{{ adminStore.selectedUser.rating || '-' }}⭐</p>
               </div>
               <div class="detail-item">
-                <label>Creat:</label>
+                <label>Creat el:</label>
                 <p>{{ formatDate(adminStore.selectedUser.createdAt) }}</p>
               </div>
               <div class="detail-item">
                 <label>Estat:</label>
-                <p>{{ adminStore.selectedUser.isBanned ? 'Banejat' : (adminStore.selectedUser.isActive ? 'Actiu' : 'Inactiu') }}</p>
+                <p>{{ adminStore.selectedUser.isBanned ? 'Bloquejat' : (adminStore.selectedUser.isActive ? 'Actiu' : 'Inactiu') }}</p>
               </div>
             </div>
           </div>
         </div>
 
         <div class="dialog-actions">
-          <button @click="showUserDetailDialog = false" class="btn btn-secondary">Tancar</button>
+          <button @click="showUserDetailDialog = false" class="btn btn-secondary">Tanca</button>
         </div>
       </div>
     </div>
@@ -647,13 +647,13 @@
     <!-- Edit User Dialog -->
     <div v-if="showEditUserDialog && adminStore.editingUser" class="dialog-overlay" @click.self="showEditUserDialog = false">
       <div class="dialog">
-        <h3>Editar Usuari</h3>
+        <h3>Edita l’usuari</h3>
         <div class="form-group">
           <label>Nom</label>
           <input v-model="adminStore.editingUser.name" type="text">
         </div>
         <div class="form-group">
-          <label>Email</label>
+          <label>Correu electrònic</label>
           <input v-model="adminStore.editingUser.email" type="email">
         </div>
         <div class="form-group">
@@ -661,8 +661,8 @@
           <input v-model="adminStore.editingUser.phone" type="tel">
         </div>
         <div class="dialog-actions">
-          <button @click="showEditUserDialog = false; adminStore.cancelEditUser()" class="btn btn-secondary">Cancelar</button>
-          <button @click="saveEditedUser" class="btn btn-success">Guardar</button>
+          <button @click="showEditUserDialog = false; adminStore.cancelEditUser()" class="btn btn-secondary">Cancel·la</button>
+          <button @click="saveEditedUser" class="btn btn-success">Desa</button>
         </div>
       </div>
     </div>
@@ -670,16 +670,16 @@
     <!-- Ban User Dialog -->
     <div v-if="showBanDialog && selectedUserForAction" class="dialog-overlay" @click.self="showBanDialog = false">
       <div class="dialog">
-        <h3>Banear Usuari</h3>
-        <p>¿Estàs segur que vols banear a <strong>{{ selectedUserForAction.name }}</strong>?</p>
+        <h3>Bloqueja l’usuari</h3>
+        <p>Segur que vols bloquejar <strong>{{ selectedUserForAction.name }}</strong>?</p>
         <textarea 
           v-model="banReason"
           placeholder="Motiu del ban..."
           rows="3"
         ></textarea>
         <div class="dialog-actions">
-          <button @click="showBanDialog = false" class="btn btn-secondary">Cancelar</button>
-          <button @click="confirmBanUser" class="btn btn-danger">Banear</button>
+          <button @click="showBanDialog = false" class="btn btn-secondary">Cancel·la</button>
+          <button @click="confirmBanUser" class="btn btn-danger">Bloqueja</button>
         </div>
       </div>
     </div>
@@ -687,15 +687,15 @@
     <!-- Reject Registration Dialog -->
     <div v-if="showRejectDialog && selectedRequest" class="dialog-overlay" @click.self="showRejectDialog = false">
       <div class="dialog">
-        <h3>Rebutjar Sol·licitud</h3>
-        <p>¿Per què vols rebutjar la sol·licitud de <strong>{{ selectedRequest.name }}</strong>?</p>
+        <h3>Rebutja la sol·licitud</h3>
+        <p>Per què vols rebutjar la sol·licitud de <strong>{{ selectedRequest.name }}</strong>?</p>
         <textarea 
           v-model="rejectionReason"
           placeholder="Motiu del rebuig..."
           rows="4"
         ></textarea>
         <div class="dialog-actions">
-          <button @click="showRejectDialog = false" class="btn btn-secondary">Cancelar</button>
+          <button @click="showRejectDialog = false" class="btn btn-secondary">Cancel·la</button>
           <button @click="rejectRegistration" class="btn btn-danger">Rebutjar</button>
         </div>
       </div>
@@ -707,7 +707,7 @@
         <h3>Detalls del Viatge #{{ selectedTrip.id }}</h3>
         <div class="detail-content">
           <div class="detail-section">
-            <h4>Informació General</h4>
+            <h4>Informació general</h4>
             <div class="detail-grid">
               <div class="detail-item">
                 <label>ID Viatge:</label>
@@ -726,7 +726,7 @@
                 <p>{{ formatDate(selectedTrip.createdAt) }}</p>
               </div>
               <div class="detail-item">
-                <label>Rating:</label>
+                <label>Valoració:</label>
                 <p>{{ selectedTrip.rating ? selectedTrip.rating + '⭐' : '-' }}</p>
               </div>
             </div>
@@ -781,7 +781,7 @@
         </div>
 
         <div class="dialog-actions">
-          <button @click="showTripDetailDialog = false" class="btn btn-secondary">Tancar</button>
+          <button @click="showTripDetailDialog = false" class="btn btn-secondary">Tanca</button>
         </div>
       </div>
     </div>
@@ -811,11 +811,11 @@ const banReason = ref('');
 const rejectionReason = ref('');
 
 const pendingRequests = computed(() => registrationStore.getPendingRequests);
-const adminEmailInput = ref('');
+const adminCorreu electrònicInput = ref('');
 const adminPasswordInput = ref('');
 const adminLoginError = ref('');
 const adminLoginLoading = ref(false);
-const loginAdmin = async () => { adminLoginLoading.value = true; adminLoginError.value = ''; try { await registrationStore.adminLogin(adminEmailInput.value, adminPasswordInput.value); await registrationStore.loadRegistrationRequests(); } catch (error) { adminLoginError.value = error.message; } finally { adminLoginLoading.value = false; } };
+const loginAdmin = async () => { adminLoginLoading.value = true; adminLoginError.value = ''; try { await registrationStore.adminLogin(adminCorreu electrònicInput.value, adminPasswordInput.value); await registrationStore.loadRegistrationRequests(); } catch (error) { adminLoginError.value = error.message; } finally { adminLoginLoading.value = false; } };
 
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('ca-ES', {
@@ -958,7 +958,7 @@ const getDriverStats = (driverId) => {
   return { totalTrips, completed, cancelled, earnings };
 };
 
-const getRatingBarWidth = (count) => {
+const getValoracióBarWidth = (count) => {
   const maxCount = 20; // Valor per referència
   return (count / maxCount) * 100;
 };
@@ -1853,7 +1853,7 @@ tbody tr:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Rating Distribution */
+/* Valoració Distribution */
 .rating-distribution {
   display: flex;
   flex-direction: column;
