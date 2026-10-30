@@ -23,6 +23,30 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
+    // Restore a previously authenticated session after a page reload.
+    async restoreSession() {
+      const token = localStorage.getItem('ruralgoUserToken');
+      if (!token) return false;
+      try {
+        const response = await fetch('https://ruralgo-backend-ighg.onrender.com/api/auth/me', {
+          headers: { Authorization: 'Bearer ' + token }
+        });
+        if (!response.ok) throw new Error('Session expired');
+        const result = await response.json();
+        this.currentUser = { ...result.user, role: result.user.role === 'passenger' ? 'client' : result.user.role };
+        this.isAuthenticated = true;
+        this.userRole = this.currentUser.role;
+        this.setSessionTimeout();
+        return true;
+      } catch (_error) {
+        localStorage.removeItem('ruralgoUserToken');
+        this.currentUser = null;
+        this.isAuthenticated = false;
+        this.userRole = null;
+        return false;
+      }
+    },
+
     // Login
     async login(email, password) {
       this.loginError = null;
