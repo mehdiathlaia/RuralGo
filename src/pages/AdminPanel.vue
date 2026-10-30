@@ -808,6 +808,11 @@ const banReason = ref('');
 const rejectionReason = ref('');
 
 const pendingRequests = computed(() => registrationStore.getPendingRequests);
+const adminEmailInput = ref('');
+const adminPasswordInput = ref('');
+const adminLoginError = ref('');
+const adminLoginLoading = ref(false);
+const loginAdmin = async () => { adminLoginLoading.value = true; adminLoginError.value = ''; try { await registrationStore.adminLogin(adminEmailInput.value, adminPasswordInput.value); await registrationStore.loadRegistrationRequests(); } catch (error) { adminLoginError.value = error.message; } finally { adminLoginLoading.value = false; } };
 
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('ca-ES', {
@@ -879,10 +884,7 @@ const saveEditedUser = () => {
   }
 };
 
-const approveRegistration = (request) => {
-  registrationStore.approveRequest(request.id);
-  adminStore.logAction('APPROVE_REGISTRATION', `Sol·licitud aprovada: ${request.name}`);
-};
+const approveRegistration = async (request) => { try { await registrationStore.updateRegistrationStatus(request.id, 'approved'); adminStore.logAction('APPROVE_REGISTRATION', 'Solicitud aprobada: ' + request.name); } catch (error) { alert(error.message); } };
 
 const rejectRegistration = () => {
   if (!rejectionReason.value.trim()) {
@@ -890,7 +892,7 @@ const rejectRegistration = () => {
     return;
   }
   if (selectedRequest.value) {
-    registrationStore.rejectRequest(selectedRequest.value.id, rejectionReason.value);
+    registrationStore.updateRegistrationStatus(selectedRequest.value.id, 'rejected', rejectionReason.value).catch(error => alert(error.message));
     adminStore.logAction('REJECT_REGISTRATION', `Sol·licitud rebutjada: ${selectedRequest.value.name} - ${rejectionReason.value}`);
     showRejectDialog.value = false;
     selectedRequest.value = null;
@@ -946,10 +948,7 @@ const getRatingBarWidth = (count) => {
   return (count / maxCount) * 100;
 };
 
-onMounted(() => {
-  adminStore.initializeAdmin();
-  registrationStore.loadFromLocalStorage();
-});
+onMounted(async () => { adminStore.initializeAdmin(); if (registrationStore.adminAuthenticated) { try { await registrationStore.loadRegistrationRequests(); } catch (error) { adminLoginError.value = error.message; } } });
 </script>
 
 <style scoped>
