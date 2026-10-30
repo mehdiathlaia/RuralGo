@@ -63,6 +63,7 @@ app.post('/api/registration-requests', async (req, res) => {
 });
 
 app.get('/api/registration-requests', async (_req, res) => {
+  return res.status(403).json({ message: 'Acceso de administrador no configurado' });
   try {
     const requests = await Registration.find().sort({ createdAt: -1 }).select('-__v');
     res.json(requests);
