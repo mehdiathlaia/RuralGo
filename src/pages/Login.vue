@@ -564,8 +564,9 @@ const handleRegister = () => {
 
 <style scoped>
 .auth-page {
+  background-image: radial-gradient(circle at 15% 15%, rgba(255,255,255,.12), transparent 32%), linear-gradient(135deg, #1f6b5b 0%, #123f37 100%);
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1f6b5b 0%, #123f37 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -590,7 +591,7 @@ const handleRegister = () => {
   width: 80px;
   height: 80px;
   margin: 0 auto 20px auto;
-  color: #4ECDC4;
+  color: #45b69c;
 }
 
 .auth-branding h1 {
@@ -624,7 +625,7 @@ const handleRegister = () => {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  color: #4ECDC4;
+  color: #45b69c;
 }
 
 .tab-icon {
@@ -658,9 +659,9 @@ const handleRegister = () => {
 
 .auth-card {
   background: white;
-  border-radius: 16px;
+  border-radius: 22px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 24px 70px rgba(10, 45, 36, 0.22);
 }
 
 .auth-tabs {
@@ -686,8 +687,8 @@ const handleRegister = () => {
 }
 
 .tab-btn.active {
-  color: #4ECDC4;
-  border-bottom-color: #4ECDC4;
+  color: #45b69c;
+  border-bottom-color: #45b69c;
 }
 
 .auth-form {
@@ -773,7 +774,7 @@ const handleRegister = () => {
 
 .form-group input:focus {
   outline: none;
-  border-color: #4ECDC4;
+  border-color: #45b69c;
   box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
 }
 
@@ -801,7 +802,7 @@ const handleRegister = () => {
   padding: 0;
   cursor: pointer;
   font: inherit;
-  color: #4ECDC4;
+  color: #45b69c;
   text-decoration: none;
   font-weight: 600;
 }
@@ -843,14 +844,14 @@ const handleRegister = () => {
 }
 
 .type-btn:hover {
-  border-color: #4ECDC4;
+  border-color: #45b69c;
   background: #f0f9fc;
 }
 
 .type-btn.selected {
-  border-color: #4ECDC4;
+  border-color: #45b69c;
   background: #f0f9fc;
-  color: #4ECDC4;
+  color: #45b69c;
 }
 
 .checkbox-group {
@@ -889,7 +890,7 @@ const handleRegister = () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1f6b5b 0%, #123f37 100%);
   color: white;
 }
 
@@ -916,7 +917,7 @@ const handleRegister = () => {
 }
 
 .link {
-  color: #4ECDC4;
+  color: #45b69c;
   text-decoration: none;
   font-weight: 600;
   cursor: pointer;
@@ -1062,7 +1063,7 @@ const handleRegister = () => {
   }
 
   .tab-btn.active {
-    border-right-color: #4ECDC4;
+    border-right-color: #45b69c;
     border-bottom-color: transparent;
   }
 }
