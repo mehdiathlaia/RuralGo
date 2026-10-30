@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="header">
       <button @click="goBack" class="back-btn">← Enrere</button>
-      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> El Meu Perfil</h1>
+      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> El meu perfil</h1>
     </div>
 
     <div class="content">
@@ -14,7 +14,7 @@
           class="tab-btn"
           :class="{ active: activeTab === 'personal' }"
         >
-          <svg class="tab-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> Dades Personals
+          <svg class="tab-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> Dades personals
         </button>
         <button 
           @click="activeTab = 'documents'" 
@@ -41,7 +41,7 @@
 
       <!-- Tab Content: Personal Info -->
       <div v-if="activeTab === 'personal'" class="tab-content">
-        <h2>Informació Personal</h2>
+        <h2>Informació personal</h2>
 
         <div class="profile-section">
           <div class="avatar-upload">
@@ -57,12 +57,12 @@
 
         <form @submit.prevent="saveProfile" class="profile-form">
           <div class="form-group">
-            <label>Nom Complet</label>
+            <label>Nom complet</label>
             <input v-model="profileData.fullName" type="text" placeholder="Joan Xifré">
           </div>
 
           <div class="form-group">
-            <label>Email</label>
+            <label>Correu electrònic</label>
             <input v-model="profileData.email" type="email" placeholder="joan@example.com">
           </div>
 
@@ -72,7 +72,7 @@
           </div>
 
           <div class="form-group">
-            <label>Data de Naixement</label>
+            <label>Data de naixement</label>
             <input v-model="profileData.dateOfBirth" type="date">
           </div>
 
@@ -96,7 +96,7 @@
             <div class="checkbox-group">
               <label>
                 <input v-model="profileData.emailNotifications" type="checkbox">
-                Notificacions per Email
+                Notificacions per Correu electrònic
               </label>
               <label>
                 <input v-model="profileData.smsNotifications" type="checkbox">
@@ -109,13 +109,13 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> Guardar Canvis</button>
+          <button type="submit" class="btn btn-primary"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> Desa els canvis</button>
         </form>
       </div>
 
       <!-- Tab Content: Documents -->
       <div v-if="activeTab === 'documents'" class="tab-content">
-        <h2>Documents Verificació</h2>
+        <h2>Documents de verificació</h2>
 
         <div class="documents-grid">
           <div 
@@ -143,8 +143,8 @@
             </div>
 
             <div class="doc-actions">
-              <button @click="uploadDocument(doc.id)" class="btn btn-small"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiDownload" fill="currentColor" /></svg> Pujar</button>
-              <button v-if="doc.verified" @click="viewDocument(doc.id)" class="btn btn-small btn-secondary"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiEyeOutline" fill="currentColor" /></svg> Veure</button>
+              <button @click="uploadDocument(doc.id)" class="btn btn-small"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiDownload" fill="currentColor" /></svg> Penja</button>
+              <button v-if="doc.verified" @click="viewDocument(doc.id)" class="btn btn-small btn-secondary"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiEyeOutline" fill="currentColor" /></svg> Mostra</button>
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@
 
       <!-- Tab Content: Payments -->
       <div v-if="activeTab === 'payments'" class="tab-content">
-        <h2>Mètodes de Pagament</h2>
+        <h2>Mètodes de pagament</h2>
 
         <div class="payment-methods">
           <div v-for="method in paymentMethods" :key="method.id" class="payment-card">
@@ -169,18 +169,18 @@
                 Establir Per Defecte
               </button>
               <button @click="deletePaymentMethod(method.id)" class="btn btn-small btn-danger">
-                <svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiTrashCan" fill="currentColor" /></svg> Eliminar
+                <svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiTrashCan" fill="currentColor" /></svg> Elimina
               </button>
             </div>
           </div>
         </div>
 
-        <button @click="addPaymentMethod" class="btn btn-primary">+ Afegir Mètode de Pagament</button>
+        <button @click="addPaymentMethod" class="btn btn-primary">+ Afegeix un mètode de pagament</button>
       </div>
 
       <!-- Tab Content: Statistics -->
       <div v-if="activeTab === 'stats'" class="tab-content">
-        <h2>Les Meves Estadístiques</h2>
+        <h2>Les meves estadístiques</h2>
 
         <div class="stats-grid-profile">
           <div class="stat-box">
@@ -188,7 +188,7 @@
               <svg class="stat-svg" viewBox="0 0 24 24"><path :d="mdiCar" fill="currentColor" /></svg>
             </div>
             <div class="stat-info">
-              <p class="stat-label">Viatges Totals</p>
+              <p class="stat-label">Viatges totals</p>
               <p class="stat-value">{{ statistics.totalTrips }}</p>
             </div>
           </div>
@@ -200,7 +200,7 @@
               </svg>
             </div>
             <div class="stat-info">
-              <p class="stat-label">Rating Promedi</p>
+              <p class="stat-label">Valoració mitjana</p>
               <p class="stat-value">{{ statistics.averageRating }}/5.0</p>
             </div>
           </div>
@@ -210,7 +210,7 @@
               <svg class="stat-svg" viewBox="0 0 24 24"><path :d="mdiCurrencyEur" fill="currentColor" /></svg>
             </div>
             <div class="stat-info">
-              <p class="stat-label">Ingressos Totals</p>
+              <p class="stat-label">Ingressos totals</p>
               <p class="stat-value">€{{ statistics.totalEarnings.toFixed(2) }}</p>
             </div>
           </div>
@@ -220,7 +220,7 @@
               <svg class="stat-svg" viewBox="0 0 24 24"><path :d="mdiClock" fill="currentColor" /></svg>
             </div>
             <div class="stat-info">
-              <p class="stat-label">Hores de Conducció</p>
+              <p class="stat-label">Hores de conducció</p>
               <p class="stat-value">{{ statistics.drivingHours }}h</p>
             </div>
           </div>
@@ -230,7 +230,7 @@
               <svg class="stat-svg" viewBox="0 0 24 24"><path :d="mdiCar" fill="currentColor" /></svg>
             </div>
             <div class="stat-info">
-              <p class="stat-label">Km Totals</p>
+              <p class="stat-label">Quilòmetres totals</p>
               <p class="stat-value">{{ statistics.totalKm }}</p>
             </div>
           </div>
@@ -242,14 +242,14 @@
               </svg>
             </div>
             <div class="stat-info">
-              <p class="stat-label">Taxa Acceptació</p>
+              <p class="stat-label">Taxa d’acceptació</p>
               <p class="stat-value">{{ statistics.acceptanceRate }}%</p>
             </div>
           </div>
         </div>
 
         <div class="monthly-chart">
-          <h3>Viatges per Mes (Últims 6 Mesos)</h3>
+          <h3>Viatges per mes (darrers 6 mesos)</h3>
           <div class="chart-bars">
             <div class="bar-item" v-for="(month, index) in statistics.monthlyTrips" :key="index">
               <div class="bar" :style="{ height: (month.trips * 5) + 'px' }"></div>
