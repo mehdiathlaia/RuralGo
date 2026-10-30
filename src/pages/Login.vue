@@ -518,10 +518,11 @@ const handleLogin = async () => {
   
   if (!loginData.value.email || !loginData.value.password) {
     error.value = 'Completa tots els camps obligatoris';
+    isLoggingIn.value = false;
     return;
   }
 
-  // Usar authStore.login() que ja gestiona tot correctament
+  // L'autenticació es valida contra el backend.
   const success = await authStore.login(loginData.value.email, loginData.value.password);
   
   if (!success) {
