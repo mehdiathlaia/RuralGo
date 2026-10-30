@@ -3,7 +3,7 @@
     <!-- Main Content -->
     <div class="emergency-page">
       <div class="header">
-        <h1>Centre d'Emergència</h1>
+        <h1>Centre d’emergències</h1>
         <p>Accés ràpid a serveis d'emergència i ajuda</p>
       </div>
 
@@ -32,7 +32,7 @@
             <svg class="icon" viewBox="0 0 24 24">
               <path :d="mdiHeadset" fill="currentColor" />
             </svg>
-            <span>Contactar Suport</span>
+            <span>Contactar amb el suport</span>
           </button>
           <p class="btn-description">Problemes amb l'app, consultes del viatge, reclamacions</p>
         </div>
@@ -58,7 +58,7 @@
                 </div>
                 <div class="step">
                   <div class="step-number">2</div>
-                  <div class="step-text">Trucar al 061 o 112 IMMEDIATAMENT</div>
+                  <div class="step-text">Truca immediatament al 112 o al 061</div>
                 </div>
                 <div class="step">
                   <div class="step-number">3</div>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="step highlight">
                   <div class="step-number">5</div>
-                  <div class="step-text"><strong>Compressions: 100-120 per minut</strong></div>
+                  <div class="step-text"><strong>Compressiós: 100-120 per minut</strong></div>
                 </div>
                 <div class="step">
                   <div class="step-number">6</div>
@@ -88,14 +88,14 @@
           <div class="aid-card expandable">
             <div class="card-header" @click="toggleCard('hemor')">
               <div class="card-icon">🩹</div>
-              <div class="card-title">Control de Hemorràgia</div>
+              <div class="card-title">Control de l’hemorràgia</div>
               <div class="expand-icon">{{ expandedCards.hemor ? '▼' : '▶' }}</div>
             </div>
             <div v-if="expandedCards.hemor" class="card-content">
               <div class="steps">
                 <div class="step highlight">
                   <div class="step-number">1</div>
-                  <div class="step-text"><strong>Trucar al 061 si la hemorràgia és greu</strong></div>
+                  <div class="step-text"><strong>Truca al 061 si l’hemorràgia és greu</strong></div>
                 </div>
                 <div class="step">
                   <div class="step-number">2</div>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="step">
                   <div class="step-number">4</div>
-                  <div class="step-text">Si continua saignant: afegeix més gasa sense treure la primera</div>
+                  <div class="step-text">Si continua sagnant: afegeix més gasa sense treure la primera</div>
                 </div>
                 <div class="step">
                   <div class="step-number">5</div>
@@ -169,19 +169,19 @@
               <div class="steps">
                 <div class="step highlight">
                   <div class="step-number">R</div>
-                  <div class="step-text"><strong>Rest</strong> - Repòs immediatament</div>
+                  <div class="step-text"><strong>Repòs</strong> - Repòs immediatament</div>
                 </div>
                 <div class="step highlight">
                   <div class="step-number">I</div>
-                  <div class="step-text"><strong>Ice</strong> - Gel 15-20 minuts (no directament sobre la pell)</div>
+                  <div class="step-text"><strong>Gel</strong> - Gel 15-20 minuts (no directament sobre la pell)</div>
                 </div>
                 <div class="step highlight">
                   <div class="step-number">C</div>
-                  <div class="step-text"><strong>Compression</strong> - Vena de compressió elàstica</div>
+                  <div class="step-text"><strong>Compressió</strong> - Aplica un embenat elàstic de compressió</div>
                 </div>
                 <div class="step highlight">
                   <div class="step-number">E</div>
-                  <div class="step-text"><strong>Elevation</strong> - Eleva per sobre del cor</div>
+                  <div class="step-text"><strong>Elevació</strong> - Eleva per sobre del cor</div>
                 </div>
                 <div class="step">
                   <div class="step-number">5</div>
