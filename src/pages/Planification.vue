@@ -2,7 +2,7 @@
   <div class="planification-page">
     <div class="header">
       <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiRocketLaunch" fill="currentColor" /></svg> RURAL-GO VIVA</h1>
-      <p>Mobilitat Rural Inteligent</p>
+      <p>Mobilitat rural intel·ligent</p>
     </div>
 
     <!-- Directament mostrar el formulari de sol·licitud -->
@@ -10,7 +10,7 @@
 
     <!-- Enllaç per veure viatges anteriors -->
     <div class="bottom-links">
-      <router-link to="/" class="link">← Tornar al menú principal</router-link>
+      <router-link to="/" class="link">← Torna al menú principal</router-link>
     </div>
   </div>
 </template>
