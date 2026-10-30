@@ -63,8 +63,33 @@
         </div>
 
         <!-- LOGIN FORM -->
-        <form v-if="mode === 'login'" @submit.prevent="handleLogin" class="auth-form">
-          <h2>Benvingut de Nou</h2>
+        <form v-if="recoveryMode === 'forgot'" @submit.prevent="requestPasswordReset" class="auth-form">
+          <h2>Recupera la contrasenya</h2>
+          <p class="intro-text">Introdueix el correu del teu compte i t’enviarem un enllaç segur.</p>
+          <div v-if="recoveryError" class="error-box" role="alert">{{ recoveryError }}</div>
+          <div v-if="recoveryMessage" class="success-box" role="status">{{ recoveryMessage }}</div>
+          <div class="form-group">
+            <label for="recoveryEmail">Correu electrònic</label>
+            <input id="recoveryEmail" v-model="recoveryEmail" type="email" autocomplete="email" required placeholder="nom@exemple.cat">
+          </div>
+          <button class="btn btn-primary" type="submit" :disabled="recoveryLoading">{{ recoveryLoading ? 'Enviant…' : 'Enviar l’enllaç' }}</button>
+          <button class="btn btn-secondary recovery-back" type="button" @click="recoveryMode = ''">Tornar a l’inici de sessió</button>
+        </form>
+
+        <form v-else-if="recoveryMode === 'reset'" @submit.prevent="resetPassword" class="auth-form">
+          <h2>Tria una contrasenya nova</h2>
+          <p class="intro-text">Fes servir almenys 10 caràcters.</p>
+          <div v-if="recoveryError" class="error-box" role="alert">{{ recoveryError }}</div>
+          <div v-if="recoveryMessage" class="success-box" role="status">{{ recoveryMessage }}</div>
+          <div class="form-group">
+            <label for="newPassword">Contrasenya nova</label>
+            <input id="newPassword" v-model="recoveryPassword" type="password" autocomplete="new-password" minlength="10" required>
+          </div>
+          <button class="btn btn-primary" type="submit" :disabled="recoveryLoading">{{ recoveryLoading ? 'Desant…' : 'Desar la contrasenya' }}</button>
+        </form>
+
+        <form v-else-if="mode === 'login'" @submit.prevent="handleLogin" class="auth-form">
+          <h2>Benvingut/da a RuralGo</h2>
 
           <div v-if="error" class="error-box">
             <svg class="error-icon" viewBox="0 0 24 24">
@@ -108,7 +133,7 @@
               <input v-model="loginData.rememberMe" type="checkbox">
               Recorda'm
             </label>
-            <a href="#" class="forgot-link">Contrasenya oblidada?</a>
+            <button type="button" class="forgot-link" @click="recoveryMode = 'forgot'; recoveryEmail = loginData.email; recoveryError = ''; recoveryMessage = ''">He oblidat la contrasenya</button>
           </div>
 
           <button type="submit" class="btn btn-primary">
@@ -122,7 +147,7 @@
 
         <!-- SOLICITUD DE ACCESO -->
         <form v-if="mode === 'register'" @submit.prevent="submitRegistrationRequest" class="auth-form">
-          <h2>Sol·licitud de Registre</h2>
+          <h2>Sol·licitud d’alta</h2>
           <p class="intro-text">Completa el formulari per sol·licitar accés a RURAL-GO VIVA. La teva sol·licitud serà revisada per l'equip d'administració.</p>
 
           <!-- Tipus d'usuari -->
@@ -276,7 +301,7 @@
             <textarea 
               v-model="registrationForm.comments" 
               id="regComments" 
-              placeholder="Informació adicional que consideris important"
+              placeholder="Informació addicional que consideris important"
               rows="3"
             ></textarea>
           </div>
@@ -315,12 +340,13 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '../store/authStore';
 import { useRegistrationStore } from '../store/registrationStore';
 import { mdiCar, mdiCheck, mdiLock, mdiFileDocument, mdiAlert, mdiEmail } from '@mdi/js';
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const registrationStore = useRegistrationStore();
 
@@ -328,6 +354,13 @@ const mode = ref('login');
 const error = ref('');
 const emailError = ref('');
 const registrationSuccess = ref('');
+const recoveryMode = ref(route.query.resetToken ? 'reset' : '');
+const recoveryEmail = ref('');
+const recoveryToken = ref(String(route.query.resetToken || ''));
+const recoveryPassword = ref('');
+const recoveryMessage = ref('');
+const recoveryError = ref('');
+const recoveryLoading = ref(false);
 
 const loginData = ref({
   email: '',
@@ -351,6 +384,56 @@ const registrationForm = ref({
   comments: '',
   acceptTerms: false
 });
+
+
+const API_URL = 'https://ruralgo-backend-ighg.onrender.com';
+
+const requestPasswordReset = async () => {
+  recoveryError.value = '';
+  recoveryMessage.value = '';
+  recoveryLoading.value = true;
+  try {
+    const response = await fetch(API_URL + '/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: recoveryEmail.value.trim() })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'No s’ha pogut enviar la sol·licitud.');
+    recoveryMessage.value = result.message;
+  } catch (err) {
+    recoveryError.value = err.message || 'Error de connexió. Torna-ho a provar.';
+  } finally {
+    recoveryLoading.value = false;
+  }
+};
+
+const resetPassword = async () => {
+  recoveryError.value = '';
+  recoveryMessage.value = '';
+  if (recoveryPassword.value.length < 10) {
+    recoveryError.value = 'La contrasenya ha de tenir almenys 10 caràcters.';
+    return;
+  }
+  recoveryLoading.value = true;
+  try {
+    const response = await fetch(API_URL + '/api/auth/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: recoveryToken.value, password: recoveryPassword.value })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'No s’ha pogut actualitzar la contrasenya.');
+    recoveryMessage.value = result.message;
+    recoveryMode.value = '';
+    recoveryPassword.value = '';
+    window.history.replaceState({}, '', '/login');
+  } catch (err) {
+    recoveryError.value = err.message || 'Error de connexió. Torna-ho a provar.';
+  } finally {
+    recoveryLoading.value = false;
+  }
+};
 
 const clearForm = () => {
   error.value = '';
@@ -417,7 +500,7 @@ const submitRegistrationRequest = async () => {
     }, 3000);
   } catch (err) {
     console.error('Error en enviar la sol·licitud:', err);
-    alert(err?.message || 'No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.');
+    alert(err?.message || 'No s’ha pogut connectar amb el servidor. Comprova la connexió i torna-ho a provar.');
   }
 };
 
@@ -707,6 +790,11 @@ const handleRegister = () => {
 }
 
 .forgot-link {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
   color: #4ECDC4;
   text-decoration: none;
   font-weight: 600;
@@ -715,6 +803,8 @@ const handleRegister = () => {
 .forgot-link:hover {
   text-decoration: underline;
 }
+
+.recovery-back { margin-top: 10px; }
 
 .account-type {
   margin-bottom: 20px;
