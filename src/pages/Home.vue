@@ -164,6 +164,10 @@ const scrollToSection = (sectionId) => {
 
 /* Hero Section */
 .hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  box-shadow: 0 24px 60px rgba(20, 60, 48, .12);
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -239,6 +243,8 @@ const scrollToSection = (sectionId) => {
 }
 
 .hero-title {
+  letter-spacing: -1.5px;
+  line-height: 1.05;
   font-size: clamp(28px, 8vw, 4rem);
   font-weight: 900;
   margin-bottom: clamp(12px, 2vw, 20px);
@@ -300,6 +306,18 @@ const scrollToSection = (sectionId) => {
 }
 
 .feature-card {
+  border: 1px solid rgba(46, 125, 110, .10);
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(20, 60, 48, .06);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 36px rgba(20, 60, 48, .12);
+}
+
+/* Existing feature card styles */
+.feature-card-original {
   padding: 40px;
   border-radius: 12px;
   background: white;
