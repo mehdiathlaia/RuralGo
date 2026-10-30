@@ -68,7 +68,7 @@
 
       <div class="notifications-list">
         <div v-if="filteredNotifications.length === 0" class="empty-state">
-          <p>✓ No hi ha notificacions noves</p>
+          <p>✓ No tens notificacions noves</p>
         </div>
 
         <div 
@@ -93,7 +93,7 @@
 
     <!-- Support chat -->
     <div class="support-chat" :class="{ open: supportChatOpen }">
-      <button class="icon-btn support-btn" @click="toggleSupportChat" title="Suport en viu">
+      <button class="icon-btn support-btn" @click="toggleSupportChat" title="Suport en directe">
         <svg class="btn-svg" viewBox="0 0 24 24">
           <path :d="mdiChat" fill="currentColor" />
         </svg>
@@ -102,7 +102,7 @@
 
       <div v-if="supportChatOpen" class="chat-box">
         <div class="chat-header">
-          <strong>Suport en viu</strong>
+          <strong>Suport en directe</strong>
           <button @click="toggleSupportChat" class="close-btn icon-btn-small" style="color: white;">
             <svg class="btn-svg-small" viewBox="0 0 24 24">
               <path :d="mdiClose" fill="currentColor" />
