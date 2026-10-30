@@ -33,7 +33,7 @@
 
         <!-- Tags de la valoració -->
         <div class="tags-section">
-          <p class="section-title">Que ha estat molt bo?</p>
+          <p class="section-title">Què ha anat especialment bé?</p>
           <div class="tags-grid">
             <button 
               v-for="tag in availableTags" 
@@ -66,11 +66,11 @@
       <!-- Fase 2: Driver valora al client (opcional) -->
       <div v-if="phase === 2 && showDriverReview" class="rating-phase">
         <h3>El conductor {{ tripInfo.driverName }} vol valorar-te</h3>
-        <p class="optional-note">Opcional - El conductor pot deixar una valoració</p>
+        <p class="optional-note">Opcional: el conductor també pot deixar-te una valoració</p>
 
         <div class="driver-pending">
-          <p>⏳ Esperant valoració del conductor...</p>
-          <p class="small-text">Rebràs una notificació quan el conductor hagi valorat</p>
+          <p>⏳ Esperant la valoració del conductor…</p>
+          <p class="small-text">Rebràs una notificació quan el conductor t’hagi valorat</p>
         </div>
 
         <button @click="finishRating" class="btn btn-success btn-large">
