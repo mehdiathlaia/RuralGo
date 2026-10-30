@@ -156,7 +156,7 @@
         <div class="step-actions">
           <button @click="currentStep = 2" class="btn btn-secondary">← Enrere</button>
           <button @click="processPayment" class="btn btn-success" :disabled="!acceptTerms">
-            <svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheckCircle" fill="currentColor" /></svg> Confirmar (€10.42)
+            <svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheckCircle" fill="currentColor" /></svg> Confirma (€10.42)
           </button>
         </div>
       </div>
