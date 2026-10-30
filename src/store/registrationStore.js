@@ -53,7 +53,7 @@ export const useRegistrationStore = defineStore('registration', () => {
     if (response.status === 401 || response.status === 403) adminLogout();
     if (!response.ok) throw new Error(result.message || 'No se pudo actualizar la solicitud');
     pendingRequests.value = pendingRequests.value.filter(request => request.id !== requestId);
-    return result.request;
+    return result;
   };
   const approvedUsers = ref([]);
 
