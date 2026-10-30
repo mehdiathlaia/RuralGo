@@ -24,23 +24,26 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     // Login
-    login(email, password) {
+    async login(email, password) {
       this.loginError = null;
-      const user = this.users.find(u => u.email === email && u.password === password);
-      
-      if (!user) {
-        this.loginError = 'Email o contrasenya incorrectes';
+      try {
+        const response = await fetch('https://ruralgo-backend-ighg.onrender.com/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'Correu o contrasenya incorrectes');
+        this.currentUser = { ...result.user, role: result.user.role === 'passenger' ? 'client' : result.user.role };
+        this.isAuthenticated = true;
+        this.userRole = this.currentUser.role;
+        localStorage.setItem('ruralgoUserToken', result.token);
+        this.setSessionTimeout();
+        return true;
+      } catch (error) {
+        this.loginError = error.message || 'No s’ha pogut iniciar sessió';
         return false;
       }
-
-      this.currentUser = { ...user };
-      this.isAuthenticated = true;
-      this.userRole = user.role;
-      
-      // Simular timeout de sessió
-      this.setSessionTimeout();
-      
-      return true;
     },
 
     // Logout
@@ -49,6 +52,7 @@ export const useAuthStore = defineStore('auth', {
       this.isAuthenticated = false;
       this.userRole = null;
       this.loginError = null;
+      localStorage.removeItem('ruralgoUserToken');
       if (this.sessionTimeout) clearTimeout(this.sessionTimeout);
       
       // Limpiar el notificationStore
