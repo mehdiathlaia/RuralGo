@@ -421,7 +421,7 @@ const submitRegistrationRequest = async () => {
   }
 };
 
-const handleLogin = () => {
+const handleLogin = async () => {
   error.value = '';
   
   if (!loginData.value.email || !loginData.value.password) {
@@ -430,7 +430,7 @@ const handleLogin = () => {
   }
 
   // Usar authStore.login() que ja gestiona tot correctament
-  const success = authStore.login(loginData.value.email, loginData.value.password);
+  const success = await authStore.login(loginData.value.email, loginData.value.password);
   
   if (!success) {
     error.value = authStore.loginError || 'Correu o contrasenya incorrectes';
