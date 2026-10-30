@@ -76,6 +76,19 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.get('/api/auth/me', async (req, res) => {
+  try {
+    const token = String(req.headers.authorization || '').replace(/^Bearer\\s+/i, '');
+    if (!token || !process.env.JWT_SECRET) return res.status(401).json({ message: 'Sessió no vàlida' });
+    const session = jwt.verify(token, process.env.JWT_SECRET);
+    if (!session.userId) return res.status(401).json({ message: 'Sessió no vàlida' });
+    const user = await User.findById(session.userId);
+    if (!user || !user.isActive) return res.status(401).json({ message: 'El compte no està disponible' });
+    return res.json({ user: { id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, rating: user.rating } });
+  } catch (error) {
+    return res.status(401).json({ message: 'Sessió caducada o no vàlida' });
+  }
+});
 app.post('/api/admin/login', (req, res) => {
   const email = String((req.body || {}).email || '').trim().toLowerCase();
   const password = String((req.body || {}).password || '');
