@@ -36,10 +36,10 @@
         <div class="footer-section">
           <h4>Serveis</h4>
           <ul class="footer-links">
-            <li><a href="#services">Transport accessible</a></li>
-            <li><a href="#services">Conductors verificats</a></li>
+            <li><a href="#services">Transport adaptat</a></li>
+            <li><a href="#services">Conductors acreditats</a></li>
             <li><a href="#services">Disponible 24/7</a></li>
-            <li><a href="#services">Preus justos</a></li>
+            <li><a href="#services">Preus transparents</a></li>
             <li><a href="#services">Comunitat local</a></li>
           </ul>
         </div>
@@ -49,7 +49,7 @@
           <h4>Ràpids</h4>
           <ul class="footer-links">
             <li><router-link to="/">Inici</router-link></li>
-            <li><router-link to="/login">Accedir</router-link></li>
+            <li><router-link to="/login">Inicia la sessió</router-link></li>
             <li><a href="#privacy">Privacitat</a></li>
             <li><a href="#terms">Termes i Condicions</a></li>
             <li><a href="#contact">Contacte</a></li>
@@ -84,8 +84,8 @@
 
       <!-- Newsletter -->
       <div class="newsletter-section">
-        <h4>Subscriu-te al nostre butlletí</h4>
-        <p>Rebeix les últimes notícies i ofertes especials</p>
+        <h4>Subscriu-te al butlletí</h4>
+        <p>Rep les darreres notícies i ofertes especials</p>
         <form @submit.prevent="handleNewsletterSubscribe" class="newsletter-form">
           <input 
             v-model="newsletterEmail" 
