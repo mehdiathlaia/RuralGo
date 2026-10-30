@@ -11,7 +11,7 @@
           </p>
           <div class="hero-buttons">
             <button @click="router.push('/login')" class="btn btn-primary btn-lg">
-              Començar
+              Comença
             </button>
             <button @click="scrollToSection('services')" class="btn btn-secondary btn-lg">
               Més informació
@@ -119,7 +119,7 @@
           <div class="step">
             <div class="step-number">3</div>
             <h4>Espera el conductor</h4>
-            <p>Reben la notificació els conductors propers</p>
+            <p>Els conductors propers reben una notificació</p>
           </div>
           <div class="step">
             <div class="step-number">4</div>
@@ -133,7 +133,7 @@
     <!-- CTA Section -->
     <section class="cta">
       <div class="container cta-content">
-        <h2>Comença ara mateix</h2>
+        <h2>Comença ara</h2>
         <p>Uneix-te a milers de persones que confien en RURAL-GO VIVA</p>
         <button @click="router.push('/login')" class="btn btn-primary btn-lg">
           Accedir a l'aplicació
