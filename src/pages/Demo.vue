@@ -1,20 +1,20 @@
 <template>
   <div class="demo-page">
     <div class="demo-container">
-      <h1>🎬 RURAL-GO VIVA - Demo Panel</h1>
-      <p class="subtitle">Testa la funcionalitat de l'aplicació</p>
+      <h1>🎬 RURAL-GO VIVA - Panell de demostració</h1>
+      <p class="subtitle">Prova les funcions de l’aplicació</p>
 
       <div class="demo-grid">
         <!-- Simular Client creant viatge -->
         <div class="demo-card">
           <h3>👤 Client</h3>
-          <p>Simula un client creat un viatge</p>
+          <p>Simula un client que crea un viatge</p>
           <div class="action-buttons">
             <button @click="createDemoTripAction" class="btn btn-primary">
               ✓ Crear viatge de prova
             </button>
             <button @click="navigateTo('/planification')" class="btn btn-secondary">
-              → Ir a Planificació
+              → Ves a la planificació
             </button>
           </div>
         </div>
@@ -22,13 +22,13 @@
         <!-- Simular Driver acceptant viatge -->
         <div class="demo-card">
           <h3>🚗 Conductor</h3>
-          <p>Simula un conductor acceptant un viatge</p>
+          <p>Simula un conductor que accepta un viatge</p>
           <div class="action-buttons">
             <button @click="setDriverOnline" class="btn btn-primary">
               🟢 Posar en línia
             </button>
             <button @click="navigateTo('/driver-dashboard')" class="btn btn-secondary">
-              → Ir a Dashboard
+              → Ves al tauler
             </button>
           </div>
         </div>
@@ -57,21 +57,21 @@
         <!-- Control de dades -->
         <div class="demo-card">
           <h3>Control</h3>
-          <p>Gestionar dades de demo</p>
+          <p>Gestiona les dades de demostració</p>
           <div class="action-buttons">
             <button @click="clearAllData" class="btn btn-danger">
-              Netejar tot
+              Esborra-ho tot
             </button>
             <button @click="exportData" class="btn btn-secondary">
-              Exportar dades
+              Exporta les dades
             </button>
           </div>
         </div>
 
         <!-- Accés ràpid als usuarios -->
         <div class="demo-card">
-          <h3>👥 Usuaris de Prova</h3>
-          <p>Accedir amb comptes de prova</p>
+          <h3>👥 Usuaris de prova</h3>
+          <p>Accedeix amb comptes de prova</p>
           <div class="quick-links">
             <button @click="loginAsClient" class="quick-link">Maria García (Client)</button>
             <button @click="loginAsDriver" class="quick-link">Joan Riera (Conductor)</button>
@@ -81,11 +81,11 @@
 
         <!-- Flux de demo -->
         <div class="demo-card">
-          <h3>🎥 Flux Automàtic</h3>
+          <h3>🎥 Flux automàtic</h3>
           <p>Demostrar el flux complet</p>
           <div class="action-buttons">
             <button @click="runDemoFlow" class="btn btn-success">
-              Iniciar demo automàtic
+              Inicia la demostració automàtica
             </button>
           </div>
           <div v-if="demoRunning" class="demo-status">
@@ -99,7 +99,7 @@
 
       <!-- Info del sistema -->
       <div class="system-info">
-        <h3>Informació del Sistema</h3>
+        <h3>Informació del sistema</h3>
         <div class="info-grid">
           <div class="info-item">
             <span>API Google Maps:</span>
@@ -227,11 +227,11 @@ const runDemoFlow = async () => {
 
   const steps = [
     { text: 'Iniciant demo...' , delay: 1000, progress: 10 },
-    { text: 'Conectant client...', delay: 1000, progress: 30 },
-    { text: 'Creant viatge...', delay: 2000, progress: 50 },
-    { text: 'Notificant conductors...', delay: 1000, progress: 70 },
-    { text: 'Conductor accepta viatge...', delay: 2000, progress: 90 },
-    { text: 'Demo completada! ✓', delay: 1000, progress: 100 },
+    { text: 'Connectant amb el client…', delay: 1000, progress: 30 },
+    { text: 'Creant el viatge…', delay: 2000, progress: 50 },
+    { text: 'Avisant els conductors…', delay: 1000, progress: 70 },
+    { text: 'El conductor accepta el viatge…', delay: 2000, progress: 90 },
+    { text: 'Demostració completada! ✓', delay: 1000, progress: 100 },
   ];
 
   for (const step of steps) {
