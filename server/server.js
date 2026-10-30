@@ -81,6 +81,8 @@ app.post('/api/auth/forgot-password', async (req, res) => {
   try {
     const email = String((req.body || {}).email || '').trim().toLowerCase();
     if (!email) return res.status(400).json({ message: 'Introdueix el correu electrònic.' });
+    const mailer = createMailer();
+    if (!mailer) return res.status(503).json({ message: 'La recuperació no està disponible: falta configurar el servei de correu. Contacta amb administració.' });
     const user = await User.findOne({ email, isActive: true });
     if (user) {
       const rawToken = crypto.randomBytes(32).toString('hex');
@@ -90,13 +92,6 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       const frontendUrl = String(process.env.FRONTEND_URL || 'https://ruralgo-app.vercel.app').replace(/\/$/, '');
       const resetUrl = frontendUrl + '/login?resetToken=' + rawToken;
       try {
-        const mailer = createMailer();
-        if (!mailer) {
-          user.passwordResetToken = undefined;
-          user.passwordResetExpires = undefined;
-          await user.save();
-          return res.status(503).json({ message: 'La recuperació no està disponible: falta configurar el servei de correu. Contacta amb administració.' });
-        }
         await mailer.sendMail({
           from: process.env.SMTP_FROM,
           to: user.email,
