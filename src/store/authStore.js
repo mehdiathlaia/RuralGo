@@ -40,6 +40,7 @@ export const useAuthStore = defineStore('auth', {
         this.setSessionTimeout();
         return true;
       } catch (_error) {
+        if (_error?.name === 'TypeError') return false; // Keep the token during temporary network outages.
         localStorage.removeItem('ruralgoUserToken');
         this.currentUser = null;
         this.isAuthenticated = false;
