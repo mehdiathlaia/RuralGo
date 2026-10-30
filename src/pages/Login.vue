@@ -367,6 +367,7 @@ const recoveryPassword = ref('');
 const recoveryMessage = ref('');
 const recoveryError = ref('');
 const recoveryLoading = ref(false);
+const isLoggingIn = ref(false);
 
 const loginData = ref({
   email: '',
@@ -511,6 +512,8 @@ const submitRegistrationRequest = async () => {
 };
 
 const handleLogin = async () => {
+  if (isLoggingIn.value) return;
+  isLoggingIn.value = true;
   error.value = '';
   
   if (!loginData.value.email || !loginData.value.password) {
@@ -523,6 +526,7 @@ const handleLogin = async () => {
   
   if (!success) {
     error.value = authStore.loginError || 'Correu o contrasenya incorrectes';
+    isLoggingIn.value = false;
     return;
   }
   
@@ -536,29 +540,7 @@ const handleLogin = async () => {
   }
 };
 
-const handleRegister = () => {
-  error.value = '';
 
-  if (!registerData.value.fullName || !registerData.value.email || !registerData.value.phone) {
-    error.value = 'Completa tots els camps obligatoris';
-    return;
-  }
-
-  if (registerData.value.password.length < 8) {
-    error.value = 'La contrasenya ha de tenir mínim 8 caràcters';
-    return;
-  }
-
-  if (registerData.value.password !== registerData.value.confirmPassword) {
-    error.value = 'Les contrasenyes no coincideixen';
-    return;
-  }
-
-  if (!registerData.value.acceptTerms || !registerData.value.acceptPrivacy) {
-    error.value = 'Has d\'acceptar els Termes i la Privacitat';
-    return;
-  }
-};
 
 </script>
 
