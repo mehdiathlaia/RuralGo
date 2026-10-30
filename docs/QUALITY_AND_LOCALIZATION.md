@@ -50,3 +50,22 @@ Sense SMTP, la recuperació de contrasenya no pot enviar l'enllaç. No s'ha de c
 ## Estat de desplegament
 
 Els canvis es desen a la branca principal i els desplegaments automàtics depenen de Vercel i Render. En la darrera comprovació, Vercel havia informat d'un límit de compilacions del compte (`build-rate-limit`). Per tant, no s'ha pogut confirmar una compilació ni un desplegament frontend correctes des d'aquesta sessió.
+### Seguretat del cicle de vida dels viatges (revisió 30/10/2026)
+- La creació de sol·licituds queda limitada al rol de passatger i valida coordenades, adreces i valors estimats.
+- L'acceptació queda limitada a conductors i es fa amb una actualització atòmica per impedir que dos conductors acceptin el mateix viatge.
+- L'inici i la finalització només els pot executar el conductor assignat i en l'estat correcte.
+- La cancel·lació només és possible per a una persona participant i abans que el viatge hagi començat.
+- Les valoracions i l'import final es validen abans de desar-los.
+- Les llistes de viatges actius es limiten als viatges propis; els conductors poden consultar les sol·licituds obertes.
+- L'historial s'ha ampliat a 50 registres.
+- S'han substituït respostes d'error amb detalls interns per missatges controlats i registres al servidor.
+
+### Interfície pública
+- S'ha refinat la portada amb una jerarquia tipogràfica més clara, degradat verd, botons més visibles, targetes amb millor separació i ajustos per a mòbil.
+- S'ha respectat la preferència del sistema per reduir animacions.
+
+### Pendents abans de publicar
+- Cal executar la compilació de producció amb dependències instal·lades i revisar el resultat de GitHub Actions.
+- Cal provar els endpoints de viatges amb comptes reals de passatger i conductor, incloent-hi intents d'accés creuat i transicions d'estat no permeses.
+- Cal revisar la consistència de valoracions i la finalització si es produeixen errors parcials en la base de dades.
+- El desplegament de Vercel continua subjecte al límit temporal del compte; els commits no garanteixen que el límit s'hagi aixecat.
