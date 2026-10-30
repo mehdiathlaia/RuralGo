@@ -540,9 +540,9 @@
           <div class="setting-item">
             <label>Correu electrònic de Suport</label>
             <input 
-              v-model="adminStore.platformSettings.supportCorreu electrònic"
+              v-model="adminStore.platformSettings.supportEmail"
               type="email"
-              @change="adminStore.updatePlatformSetting('supportCorreu electrònic', adminStore.platformSettings.supportCorreu electrònic)"
+              @change="adminStore.updatePlatformSetting('supportEmail', adminStore.platformSettings.supportEmail)"
             >
           </div>
 
