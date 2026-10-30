@@ -80,10 +80,7 @@ h1, h2, h3, h4, h5, h6 {
   .m-responsive { margin: clamp(12px, 3vw, 16px); }
   .gap-responsive { gap: clamp(12px, 2vw, 16px); }
   
-  /* Two-column layouts on tablet */
-  [class*="grid"] {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-  }
+  /* Component-specific grids retain their designed tablet columns. */
 }
 
 /* Desktop */
@@ -92,10 +89,7 @@ h1, h2, h3, h4, h5, h6 {
   .m-responsive { margin: clamp(16px, 2vw, 24px); }
   .gap-responsive { gap: clamp(16px, 2vw, 24px); }
   
-  /* Three+ column layouts on desktop */
-  [class*="grid"] {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
-  }
+  /* Component-specific grids retain their designed desktop columns. */
 }
 
 /* Landscape mode optimizations */
@@ -125,9 +119,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   /* Increase gap between clickable elements */
-  [class*="flex"], [class*="grid"] {
-    gap: clamp(12px, 2vw, 16px) !important;
-  }
+  /* Keep touch spacing local to each component. */
 }
 
 /* High DPI screens */
