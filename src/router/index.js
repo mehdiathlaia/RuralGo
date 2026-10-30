@@ -28,7 +28,7 @@ const router = createRouter({
     { path: '/admin', redirect: '/admin/registrations' },
     { path: '/login', component: Login },
     { path: '/register-request', component: RegisterRequest },
-    { path: '/admin/registrations', component: AdminPanel, meta: { requiresAuth: true, requiredRole: 'admin' } },
+    { path: '/admin/registrations', component: AdminPanel },
     { path: '/demo', component: Demo }, // Demo panel accessible
     { path: '/profile', component: Profile, meta: { requiresAuth: true } },
     { path: '/services', component: Services, meta: { requiresAuth: false } },
@@ -54,28 +54,24 @@ const router = createRouter({
   ]
 });
 
-// Route guards - TEMPORALMENTE DESACTIVADO PARA DEBUGGING
-/*
-router.beforeEach(async (to, from, next) => {
-  // Import dinàmic per evitar dependències circulars
+// Protecció de rutes privades. El panell admin manté el seu propi inici de sessió.
+router.beforeEach(async (to) => {
+  if (!to.meta.requiresAuth && !to.meta.requiredRole) return true;
+
   const { useAuthStore } = await import('../store/authStore');
   const authStore = useAuthStore();
-  
-  // Verificar autenticación
-  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    next('/login');
-    return;
+
+  if (!authStore.isLoggedIn) {
+    const restored = await authStore.restoreSession();
+    if (!restored) return { path: '/login', query: { redirect: to.fullPath } };
   }
-  
-  // Verificar rol requerido
+
   if (to.meta.requiredRole && authStore.userRole !== to.meta.requiredRole) {
-    // Si no tiene el rol correcto, redirigir a home
-    next('/');
-    return;
+    return authStore.userRole === 'driver' ? '/driver-dashboard' :
+      authStore.userRole === 'client' ? '/planification' : '/';
   }
-  
-  next();
+
+  return true;
 });
-*/
 
 export default router;
