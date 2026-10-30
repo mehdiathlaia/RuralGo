@@ -2,7 +2,7 @@
   <div class="services-page">
     <div class="header">
       <h1><svg class="title-icon" viewBox="0 0 24 24"><path :d="mdiTarget" fill="currentColor" /></svg> Serveis RURAL-GO VIVA</h1>
-      <p>Descobreix tots els serveis disponibles a la plataforma</p>
+      <p>Descobreix tots els serveis disponibles a RuralGo</p>
     </div>
 
     <!-- Filtre -->
@@ -56,7 +56,7 @@
           </div>
 
           <div class="detail-section">
-            <h3>Casos d'Ús</h3>
+            <h3>Casos d’ús</h3>
             <ul class="use-cases">
               <li v-for="(useCase, idx) in selectedService.useCases" :key="idx">
                 <svg class="check-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> {{ useCase }}
@@ -65,10 +65,10 @@
           </div>
 
           <div class="detail-section">
-            <h3>Informació de Preus</h3>
+            <h3>Informació de preus</h3>
             <div class="pricing-info">
               <div class="price-item">
-                <span class="label">Tarifa Base:</span>
+                <span class="label">Tarifa base:</span>
                 <span class="value">€{{ selectedService.baseFare }}</span>
               </div>
               <div class="price-item">
@@ -76,7 +76,7 @@
                 <span class="value">€{{ selectedService.pricePerKm }}</span>
               </div>
               <div class="price-item">
-                <span class="label">Durada Mínima:</span>
+                <span class="label">Durada mínima:</span>
                 <span class="value">{{ selectedService.minDuration }} min</span>
               </div>
             </div>
@@ -103,14 +103,14 @@
                 <span class="value">{{ selectedService.availability.zones }}</span>
               </div>
               <div class="avail-item">
-                <span class="label">Temps Resposta:</span>
+                <span class="label">Temps de resposta:</span>
                 <span class="value">{{ selectedService.availability.responseTime }}</span>
               </div>
             </div>
           </div>
 
           <div class="detail-section">
-            <h3>Valoració de Clients</h3>
+            <h3>Valoració de les persones usuàries</h3>
             <div class="rating-display">
               <div class="stars">
                 <svg v-for="i in 5" :key="i" class="star" :class="{ filled: i <= Math.round(selectedService.rating) }" viewBox="0 0 24 24"><path :d="mdiStar" fill="currentColor" /></svg>
