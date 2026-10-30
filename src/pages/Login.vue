@@ -88,6 +88,12 @@
           <button class="btn btn-primary" type="submit" :disabled="recoveryLoading">{{ recoveryLoading ? 'Desant…' : 'Desar la contrasenya' }}</button>
         </form>
 
+        <div v-else-if="recoveryMode === 'done'" class="auth-form recovery-complete">
+          <h2>Contrasenya actualitzada</h2>
+          <p class="success-box" role="status">{{ recoveryMessage }}</p>
+          <button class="btn btn-primary" type="button" @click="recoveryMode = ''; recoveryMessage = ''">Torna a iniciar la sessió</button>
+        </div>
+
         <form v-else-if="mode === 'login'" @submit.prevent="handleLogin" class="auth-form">
           <h2>Benvingut/da a RuralGo</h2>
 
@@ -425,7 +431,7 @@ const resetPassword = async () => {
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || 'No s’ha pogut actualitzar la contrasenya.');
     recoveryMessage.value = result.message;
-    recoveryMode.value = '';
+    recoveryMode.value = 'done';
     recoveryPassword.value = '';
     window.history.replaceState({}, '', '/login');
   } catch (err) {
@@ -442,7 +448,7 @@ const clearForm = () => {
 
 const checkEmailExists = () => {
   if (registrationForm.value.email && registrationStore.emailExists(registrationForm.value.email)) {
-    emailError.value = 'Aquest correu ja està registrat o en proces de revisió';
+    emailError.value = 'Aquest correu ja està registrat o en procés de revisió';
   } else {
     emailError.value = '';
   }
@@ -508,7 +514,7 @@ const handleLogin = async () => {
   error.value = '';
   
   if (!loginData.value.email || !loginData.value.password) {
-    error.value = 'Completa tots els camps';
+    error.value = 'Completa tots els camps obligatoris';
     return;
   }
 
@@ -520,7 +526,7 @@ const handleLogin = async () => {
     return;
   }
   
-  // Redirect correcte basant-se en el role de l'usuari
+  // Redirecció segons el perfil de l’usuari
   if (authStore.userRole === 'admin') {
     router.push('/admin/registrations');
   } else if (authStore.userRole === 'driver') {
@@ -805,6 +811,7 @@ const handleRegister = () => {
 }
 
 .recovery-back { margin-top: 10px; }
+.recovery-complete { text-align: center; }
 
 .account-type {
   margin-bottom: 20px;
