@@ -425,7 +425,7 @@ const updateAddress = (address) => {
   }
 };
 
-const submitRegistrationRequest = () => {
+const submitRegistrationRequest = async () => {
   if (!registrationForm.value.acceptTerms) {
     alert('Has d\'acceptar els termes i condicions');
     return;
@@ -442,7 +442,7 @@ const submitRegistrationRequest = () => {
   }
 
   try {
-    const request = registrationStore.createRegistrationRequest({
+    const request = await registrationStore.createRegistrationRequest({
       userType: registrationForm.value.userType,
       name: registrationForm.value.name,
       email: registrationForm.value.email,
