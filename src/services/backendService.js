@@ -2,8 +2,8 @@ import axios from 'axios';
 import io from 'socket.io-client';
 
 // Cambia esto cuando despliegues en producción
-const API_URL = 'https://ruralgo-backend.onrender.com/api';
-const SOCKET_URL = 'https://ruralgo-backend.onrender.com';
+const API_URL = 'https://ruralgo-backend-ighg.onrender.com/api';
+const SOCKET_URL = 'https://ruralgo-backend-ighg.onrender.com';
 
 // Crear instancia de axios
 const api = axios.create({
