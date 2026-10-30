@@ -158,7 +158,7 @@
 
           <!-- Tipus d'usuari -->
           <div class="form-group">
-            <label for="userType">Tipus d'Usuari *</label>
+            <label for="userType">Tipus d’usuari *</label>
             <select v-model="registrationForm.userType" id="userType" required>
               <option value="">Selecciona el teu rol</option>
               <option value="client">Client</option>
@@ -168,7 +168,7 @@
 
           <!-- Nom complet -->
           <div class="form-group">
-            <label for="regName">Nom Complet *</label>
+            <label for="regName">Nom complet *</label>
             <input 
               v-model="registrationForm.name" 
               type="text" 
@@ -180,7 +180,7 @@
 
           <!-- Email -->
           <div class="form-group">
-            <label for="regEmail">Correu *</label>
+            <label for="regEmail">Correu electrònic *</label>
             <input 
               v-model="registrationForm.email" 
               type="email" 
@@ -252,7 +252,7 @@
 
           <!-- Tarjeta Sanitaria -->
           <div class="form-group">
-            <label for="regHealth">Número de Targeta Sanitària *</label>
+            <label for="regHealth">Número de targeta sanitària *</label>
             <input 
               v-model="registrationForm.healthCard" 
               type="text" 
@@ -264,7 +264,7 @@
 
           <!-- Fecha de Nacimiento -->
           <div class="form-group">
-            <label for="regBirth">Data de Naixement *</label>
+            <label for="regBirth">Data de naixement *</label>
             <input 
               v-model="registrationForm.birthDate" 
               type="date" 
@@ -303,7 +303,7 @@
 
           <!-- Comentarios -->
           <div class="form-group">
-            <label for="regComments">Comentaris Addicionals</label>
+            <label for="regComments">Comentaris addicionals</label>
             <textarea 
               v-model="registrationForm.comments" 
               id="regComments" 
@@ -323,7 +323,7 @@
           <!-- Botones -->
           <div class="form-actions" style="gap: 10px;">
             <button type="submit" class="btn btn-primary">
-              Enviar Sol·licitud
+              Envia la sol·licitud
             </button>
             <button type="button" @click="mode = 'login'" class="btn btn-secondary">
               Enrere
@@ -530,9 +530,9 @@ const handleLogin = async () => {
   if (authStore.userRole === 'admin') {
     router.push('/admin/registrations');
   } else if (authStore.userRole === 'driver') {
-    router.push('/driver-dashboard');
+    router.push(route.query.redirect || '/driver-dashboard');
   } else {
-    router.push('/planification');
+    router.push(route.query.redirect || '/planification');
   }
 };
 
