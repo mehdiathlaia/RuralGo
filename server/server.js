@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
@@ -12,6 +13,10 @@ const registrationSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, trim: true, lowercase: true },
   phone: { type: String, required: true },
+  dni: String,
+  rejectionReason: String,
+  reviewedAt: Date,
+  reviewedBy: String,
   address: String,
   postalCode: String,
   city: String,
@@ -34,6 +39,38 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/', (req, res) => res.json({ message: 'RuraLGo Backend' }));
+
+function requireAdmin(req, res, next) {
+  try {
+    const token = (req.headers.authorization || '').split(' ')[1];
+    if (!token || !process.env.JWT_SECRET) return res.status(401).json({ message: 'Acceso de administrador requerido' });
+    const session = jwt.verify(token, process.env.JWT_SECRET);
+    if (session.role !== 'admin') return res.status(403).json({ message: 'Acceso restringido' });
+    req.adminEmail = session.email;
+    next();
+  } catch (error) { return res.status(401).json({ message: 'Sesión inválida o caducada' }); }
+}
+
+app.post('/api/admin/login', (req, res) => {
+  const email = String((req.body || {}).email || '').trim().toLowerCase();
+  const password = String((req.body || {}).password || '');
+  if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD || !process.env.JWT_SECRET) return res.status(503).json({ message: 'Configura ADMIN_EMAIL, ADMIN_PASSWORD y JWT_SECRET en Render' });
+  if (email !== process.env.ADMIN_EMAIL.trim().toLowerCase() || password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ message: 'Correo o contraseña incorrectos' });
+  const token = jwt.sign({ role: 'admin', email: process.env.ADMIN_EMAIL }, process.env.JWT_SECRET, { expiresIn: '8h' });
+  return res.json({ token, email: process.env.ADMIN_EMAIL });
+});
+
+app.patch('/api/registration-requests/:id', requireAdmin, async (req, res) => {
+  try {
+    const status = (req.body || {}).status;
+    if (!['approved', 'rejected'].includes(status)) return res.status(400).json({ message: 'Estado no válido' });
+    const update = { status, reviewedAt: new Date(), reviewedBy: req.adminEmail };
+    if (status === 'rejected') update.rejectionReason = String((req.body || {}).rejectionReason || '').trim();
+    const request = await Registration.findByIdAndUpdate(req.params.id, update, { new: true, runValidators: true }).select('-__v');
+    if (!request) return res.status(404).json({ message: 'Solicitud no encontrada' });
+    return res.json({ message: 'Solicitud actualizada', request });
+  } catch (error) { return res.status(500).json({ message: 'No se pudo actualizar la solicitud' }); }
+});
 
 app.post('/api/registration-requests', async (req, res) => {
   try {
@@ -62,8 +99,7 @@ app.post('/api/registration-requests', async (req, res) => {
   }
 });
 
-app.get('/api/registration-requests', async (_req, res) => {
-  return res.status(403).json({ message: 'Acceso de administrador no configurado' });
+app.get('/api/registration-requests', requireAdmin, async (_req, res) => {
   try {
     const requests = await Registration.find().sort({ createdAt: -1 }).select('-__v');
     res.json(requests);
