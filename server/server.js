@@ -37,7 +37,7 @@ app.get('/', (req, res) => res.json({ message: 'RuraLGo Backend' }));
 
 app.post('/api/registration-requests', async (req, res) => {
   try {
-    const { userType, name, email, phone, address, postalCode, city, birthDate, licenseNumber, licenseExpiry, comments } = req.body;
+    const { userType, name, email, phone, dni, address, postalCode, city, birthDate, licenseNumber, licenseExpiry, comments } = req.body;
     if (!userType || !name || !email || !phone) {
       return res.status(400).json({ message: 'Falten camps obligatoris' });
     }
@@ -49,7 +49,7 @@ app.post('/api/registration-requests', async (req, res) => {
     if (existing) return res.status(409).json({ message: 'Aquest correu ja té una sol·licitud registrada' });
 
     const request = await Registration.create({
-      userType, name, email: normalizedEmail, phone, address, postalCode, city,
+      userType, name, email: normalizedEmail, phone, dni, address, postalCode, city,
       birthDate, licenseNumber, licenseExpiry, comments
     });
     return res.status(201).json({
