@@ -185,14 +185,15 @@
             />
           </div>
 
-          <!-- Dirección -->
-          <!-- Dirección con Google Maps -->
+          <!-- Adreça: camp de text lliure, sense mapa ni selecció externa -->
           <div class="form-group">
-            <AddressAutocomplete
-              v-model="selectedAddress"
-              label="Adreça *"
-              placeholder="Escriu l'adreça o selecciona del mapa..."
-              @update:modelValue="updateAddress"
+            <label for="regAddress">Adreça *</label>
+            <input
+              v-model="registrationForm.address"
+              type="text"
+              id="regAddress"
+              placeholder="Carrer, número, pis"
+              required
             />
           </div>
 
@@ -290,11 +291,11 @@
 
           <!-- Botones -->
           <div class="form-actions" style="gap: 10px;">
-            <button type="button" @click="mode = 'login'" class="btn btn-secondary">
-              Enrere
-            </button>
             <button type="submit" class="btn btn-primary">
               Enviar Sol·licitud
+            </button>
+            <button type="button" @click="mode = 'login'" class="btn btn-secondary">
+              Enrere
             </button>
           </div>
 
@@ -306,48 +307,7 @@
           </p>
         </form>
 
-        <!-- DEMO USERS SECTION -->
-        <div class="demo-section">
-          <div class="demo-header">
-            <svg class="demo-title-icon" viewBox="0 0 24 24">
-              <path :d="mdiTarget" fill="currentColor" />
-            </svg>
-            <h3>Usuaris de Demostració</h3>
-          </div>
-          <p class="demo-subtitle">Clica per accedir immediatament:</p>
-          
-          <div class="demo-buttons">
-            <button @click="quickLogin('maria@example.com', 'pass123')" class="btn-demo btn-demo-client">
-              <svg class="demo-user-icon" viewBox="0 0 24 24">
-                <path :d="mdiAccount" fill="currentColor" />
-              </svg>
-              <span class="text">
-                <strong>Maria García</strong>
-                <small>Client</small>
-              </span>
-            </button>
-            
-            <button @click="quickLogin('joan@example.com', 'pass123')" class="btn-demo btn-demo-driver">
-              <svg class="demo-user-icon" viewBox="0 0 24 24">
-                <path :d="mdiAccount" fill="currentColor" />
-              </svg>
-              <span class="text">
-                <strong>Joan Riera</strong>
-                <small>Conductor</small>
-              </span>
-            </button>
 
-            <button @click="quickLogin('admin@ruralgo.com', 'admin123')" class="btn-demo btn-demo-admin">
-              <svg class="demo-user-icon" viewBox="0 0 24 24">
-                <path :d="mdiCog" fill="currentColor" />
-              </svg>
-              <span class="text">
-                <strong>Administrador</strong>
-                <small>Panel Admin</small>
-              </span>
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -358,8 +318,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../store/authStore';
 import { useRegistrationStore } from '../store/registrationStore';
-import { mdiCar, mdiCheck, mdiLock, mdiFileDocument, mdiAlert, mdiAccount, mdiAccountMultiple, mdiEmail, mdiTarget, mdiCog } from '@mdi/js';
-import AddressAutocomplete from '../components/AddressAutocomplete.vue';
+import { mdiCar, mdiCheck, mdiLock, mdiFileDocument, mdiAlert, mdiEmail } from '@mdi/js';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -369,7 +328,6 @@ const mode = ref('login');
 const error = ref('');
 const emailError = ref('');
 const registrationSuccess = ref('');
-const selectedAddress = ref(null);
 
 const loginData = ref({
   email: '',
@@ -407,32 +365,9 @@ const checkEmailExists = () => {
   }
 };
 
-const updateAddress = (address) => {
-  if (address) {
-    console.log('📍 Adreça seleccionada:', address);
-    registrationForm.value.address = address.description || address.fullAddress || address.name || '';
-    
-    // Assegurar-se que els camps postalCode i city es rellenen correctament
-    registrationForm.value.postalCode = address.postalCode || '';
-    registrationForm.value.city = address.city || '';
-    
-    console.log('✅ Formulari actualitzat:', {
-      address: registrationForm.value.address,
-      postalCode: registrationForm.value.postalCode,
-      city: registrationForm.value.city,
-      addressObject: address
-    });
-  }
-};
-
 const submitRegistrationRequest = async () => {
   if (!registrationForm.value.acceptTerms) {
     alert('Has d\'acceptar els termes i condicions');
-    return;
-  }
-
-  if (!selectedAddress.value) {
-    alert('Si us plau, selecciona una adreça del llistat');
     return;
   }
 
@@ -535,10 +470,6 @@ const handleRegister = () => {
   }
 };
 
-const quickLogin = (email, password) => {
-  loginData.value = { email, password, rememberMe: false };
-  setTimeout(() => handleLogin(), 100);
-};
 </script>
 
 <style scoped>
