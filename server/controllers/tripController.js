@@ -1,185 +1,158 @@
 const Trip = require('../models/Trip');
-const Notification = require('../models/Notification');
 const User = require('../models/User');
 
-// Crear solicitud de viaje
+const isValidRating = value => value === undefined || value === null ||
+  (Number.isFinite(Number(value)) && Number(value) >= 1 && Number(value) <= 5);
+
+const sameId = (a, b) => String(a) === String(b);
+
+// Crear una sol·licitud: només les persones passatgeres poden demanar viatges.
 exports.createTrip = async (req, res) => {
   try {
-    const {
-      pickupLocation,
-      dropoffLocation,
-      serviceType,
-      estimatedDistance,
-      estimatedDuration,
-      estimatedPrice,
-      notes
-    } = req.body;
-
-    const trip = new Trip({
-      passengerId: req.userId,
-      pickupLocation,
-      dropoffLocation,
-      serviceType,
-      estimatedDistance,
-      estimatedDuration,
-      estimatedPrice,
-      notes,
+    if (req.userRole !== 'passenger') return res.status(403).json({ message: 'Només els passatgers poden sol·licitar viatges.' });
+    const { pickupLocation, dropoffLocation, serviceType, estimatedDistance, estimatedDuration, estimatedPrice, notes } = req.body || {};
+    const validLocation = value => value && typeof value.address === 'string' && value.address.trim() &&
+      Number.isFinite(Number(value.latitude)) && Number.isFinite(Number(value.longitude)) &&
+      Math.abs(Number(value.latitude)) <= 90 && Math.abs(Number(value.longitude)) <= 180;
+    if (!validLocation(pickupLocation) || !validLocation(dropoffLocation)) {
+      return res.status(400).json({ message: 'Cal indicar un origen i una destinació vàlids.' });
+    }
+    for (const [value, min, max] of [[estimatedDistance, 0, 10000], [estimatedDuration, 0, 100000], [estimatedPrice, 0, 100000]]) {
+      if (value !== undefined && (!Number.isFinite(Number(value)) || Number(value) < min || Number(value) > max)) {
+        return res.status(400).json({ message: 'Les dades estimades del viatge no són vàlides.' });
+      }
+    }
+    const trip = await Trip.create({
+      passengerId: req.userId, pickupLocation, dropoffLocation,
+      serviceType, estimatedDistance, estimatedDuration, estimatedPrice,
+      notes: typeof notes === 'string' ? notes.trim().slice(0, 1000) : '',
       status: 'requested'
     });
-
-    await trip.save();
     await trip.populate('passengerId', 'name phone rating');
-
-    res.status(201).json(trip);
+    return res.status(201).json(trip);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Create trip error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut crear la sol·licitud.' });
   }
 };
 
-// Obtener viajes activos
+// Cada usuari només veu els viatges en què participa; els conductors també poden veure sol·licituds obertes.
 exports.getActiveTrips = async (req, res) => {
   try {
-    const trips = await Trip.find({
-      $or: [
-        { passengerId: req.userId },
-        { driverId: req.userId }
-      ],
-      status: { $in: ['requested', 'accepted', 'started'] }
-    })
+    const filter = req.userRole === 'driver'
+      ? { $or: [{ driverId: req.userId }, { status: 'requested', driverId: null }] }
+      : { passengerId: req.userId };
+    const trips = await Trip.find({ ...filter, status: { $in: ['requested', 'accepted', 'started'] } })
       .populate('passengerId', 'name phone rating profilePicture')
       .populate('driverId', 'name phone rating profilePicture')
       .sort({ createdAt: -1 });
-
-    res.json(trips);
+    return res.json(trips);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Get active trips error:', error.message);
+    return res.status(500).json({ message: 'No s’han pogut carregar els viatges actius.' });
   }
 };
 
-// Aceptar viaje (para conductores)
+// Assignació atòmica: evita que dos conductors acceptin el mateix viatge.
 exports.acceptTrip = async (req, res) => {
   try {
-    const { tripId } = req.params;
-
-    const trip = await Trip.findById(tripId);
-    if (!trip) {
-      return res.status(404).json({ message: 'Viaje no encontrado' });
-    }
-
-    if (trip.status !== 'requested') {
-      return res.status(400).json({ message: 'Viaje no disponible' });
-    }
-
-    trip.driverId = req.userId;
-    trip.status = 'accepted';
-    trip.acceptedAt = new Date();
-    await trip.save();
-
-    await trip.populate('passengerId', 'name phone location');
-    await trip.populate('driverId', 'name phone location profilePicture');
-
-    res.json(trip);
+    if (req.userRole !== 'driver') return res.status(403).json({ message: 'Només els conductors poden acceptar viatges.' });
+    const trip = await Trip.findOneAndUpdate(
+      { _id: req.params.tripId, status: 'requested', driverId: null },
+      { $set: { driverId: req.userId, status: 'accepted', acceptedAt: new Date() } },
+      { new: true, runValidators: true }
+    ).populate('passengerId', 'name phone location').populate('driverId', 'name phone location profilePicture');
+    if (!trip) return res.status(409).json({ message: 'El viatge ja no està disponible.' });
+    return res.json(trip);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Accept trip error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut acceptar el viatge.' });
   }
 };
 
-// Iniciar viaje
 exports.startTrip = async (req, res) => {
   try {
-    const { tripId } = req.params;
-
-    const trip = await Trip.findByIdAndUpdate(
-      tripId,
-      {
-        status: 'started',
-        startedAt: new Date()
-      },
-      { new: true }
-    )
-      .populate('passengerId')
-      .populate('driverId');
-
-    res.json(trip);
+    if (req.userRole !== 'driver') return res.status(403).json({ message: 'Acció exclusiva del conductor assignat.' });
+    const trip = await Trip.findOneAndUpdate(
+      { _id: req.params.tripId, driverId: req.userId, status: 'accepted' },
+      { $set: { status: 'started', startedAt: new Date() } },
+      { new: true, runValidators: true }
+    ).populate('passengerId', 'name phone').populate('driverId', 'name phone');
+    if (!trip) return res.status(404).json({ message: 'No s’ha trobat un viatge assignat pendent d’iniciar.' });
+    return res.json(trip);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Start trip error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut iniciar el viatge.' });
   }
 };
 
-// Completar viaje
 exports.completeTrip = async (req, res) => {
   try {
-    const { tripId } = req.params;
-    const { actualPrice, passengerRating, driverRating } = req.body;
-
-    const trip = await Trip.findByIdAndUpdate(
-      tripId,
-      {
-        status: 'completed',
-        completedAt: new Date(),
-        actualPrice,
-        'rating.passenger': passengerRating,
-        'rating.driver': driverRating
-      },
-      { new: true }
-    )
-      .populate('passengerId')
-      .populate('driverId');
-
-    // Actualizar calificaciones de usuarios
-    if (passengerRating) {
-      const driver = await User.findById(trip.driverId);
-      driver.rating = ((driver.rating * driver.reviews) + passengerRating) / (driver.reviews + 1);
-      driver.reviews += 1;
-      await driver.save();
+    if (req.userRole !== 'driver') return res.status(403).json({ message: 'Només el conductor assignat pot completar el viatge.' });
+    const { actualPrice, passengerRating, driverRating } = req.body || {};
+    if (actualPrice !== undefined && (!Number.isFinite(Number(actualPrice)) || Number(actualPrice) < 0 || Number(actualPrice) > 100000)) {
+      return res.status(400).json({ message: 'L’import final no és vàlid.' });
     }
-
-    if (driverRating) {
-      const passenger = await User.findById(trip.passengerId);
-      passenger.rating = ((passenger.rating * passenger.reviews) + driverRating) / (passenger.reviews + 1);
-      passenger.reviews += 1;
-      await passenger.save();
+    if (!isValidRating(passengerRating) || !isValidRating(driverRating)) {
+      return res.status(400).json({ message: 'Les valoracions han d’estar entre 1 i 5.' });
     }
+    const trip = await Trip.findOneAndUpdate(
+      { _id: req.params.tripId, driverId: req.userId, status: 'started' },
+      { $set: { status: 'completed', completedAt: new Date(), ...(actualPrice !== undefined ? { actualPrice: Number(actualPrice) } : {}), ...(passengerRating != null ? { 'rating.passenger': Number(passengerRating) } : {}), ...(driverRating != null ? { 'rating.driver': Number(driverRating) } : {}) } },
+      { new: true, runValidators: true }
+    );
+    if (!trip) return res.status(404).json({ message: 'No s’ha trobat un viatge en curs assignat.' });
 
-    res.json(trip);
+    // Actualitzar valoracions només després de completar correctament el viatge.
+    const updates = [];
+    if (passengerRating != null) updates.push(User.findById(trip.driverId).then(user => {
+      if (!user) return;
+      user.rating = ((user.rating * user.reviews) + Number(passengerRating)) / (user.reviews + 1);
+      user.reviews += 1;
+      return user.save();
+    }));
+    if (driverRating != null) updates.push(User.findById(trip.passengerId).then(user => {
+      if (!user) return;
+      user.rating = ((user.rating * user.reviews) + Number(driverRating)) / (user.reviews + 1);
+      user.reviews += 1;
+      return user.save();
+    }));
+    await Promise.all(updates);
+    await trip.populate('passengerId', 'name phone rating').populate('driverId', 'name phone rating');
+    return res.json(trip);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Complete trip error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut completar el viatge.' });
   }
 };
 
-// Cancelar viaje
 exports.cancelTrip = async (req, res) => {
   try {
-    const { tripId } = req.params;
-
-    const trip = await Trip.findByIdAndUpdate(
-      tripId,
-      { status: 'cancelled' },
-      { new: true }
-    );
-
-    res.json(trip);
+    const filter = {
+      _id: req.params.tripId,
+      status: { $in: ['requested', 'accepted'] },
+      ...(req.userRole === 'passenger' ? { passengerId: req.userId } :
+        req.userRole === 'driver' ? { driverId: req.userId } : { _id: null })
+    };
+    const trip = await Trip.findOneAndUpdate(filter, { $set: { status: 'cancelled' } }, { new: true, runValidators: true });
+    if (!trip) return res.status(404).json({ message: 'No s’ha trobat un viatge cancel·lable del teu compte.' });
+    return res.json(trip);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Cancel trip error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut cancel·lar el viatge.' });
   }
 };
 
-// Obtener historial de viajes
 exports.getTripHistory = async (req, res) => {
   try {
     const trips = await Trip.find({
-      $or: [
-        { passengerId: req.userId },
-        { driverId: req.userId }
-      ]
-    })
-      .populate('passengerId', 'name phone rating profilePicture')
+      $or: [{ passengerId: req.userId }, { driverId: req.userId }]
+    }).populate('passengerId', 'name phone rating profilePicture')
       .populate('driverId', 'name phone rating profilePicture')
-      .sort({ createdAt: -1 })
-      .limit(20);
-
-    res.json(trips);
+      .sort({ createdAt: -1 }).limit(50);
+    return res.json(trips);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Get trip history error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut carregar l’historial.' });
   }
 };
