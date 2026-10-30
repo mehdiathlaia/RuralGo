@@ -2,7 +2,7 @@
   <div class="ratings-container">
     <div class="page-header">
       <h1>Valoracions i ressenyes</h1>
-      <p>Veu les valoracions rebudes dels teus viatges</p>
+      <p>Consulta les valoracions que has rebut pels teus viatges</p>
     </div>
 
     <!-- Estadístiques globals -->
@@ -21,23 +21,23 @@
 
       <div class="stat-card">
         <div class="stat-value">{{ stats.totalReviews }}</div>
-        <div class="stat-label">Ressenyes totals</div>
+        <div class="stat-label">Total de ressenyes</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-value">{{ stats.ratingDistribution[5] }}</div>
-        <div class="stat-label">Valoracions de 5 ⭐</div>
+        <div class="stat-label">Valoracions de 5 estrelles</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-value">{{ getMostUsedTag }}</div>
-        <div class="stat-label">Aspecte més valorat</div>
+        <div class="stat-label">Aspecte més ben valorat</div>
       </div>
     </div>
 
     <!-- Gràfic de distribució -->
     <div class="distribution-card">
-      <h2>Distribució de valoracions</h2>
+      <h2>Distribució de les valoracions</h2>
       <div class="distribution-bars">
         <div 
           v-for="stars in [5, 4, 3, 2, 1]" 
@@ -75,9 +75,9 @@
       </div>
     </div>
 
-    <!-- Ressenyes recents -->
+    <!-- Ressenyes més recents -->
     <div class="reviews-card">
-      <h2>Ressenyes recents</h2>
+      <h2>Ressenyes més recents</h2>
       
       <div v-if="stats.recentReviews.length > 0" class="reviews-list">
         <div 
@@ -141,7 +141,7 @@
         </div>
       </div>
       <div v-else class="empty-state">
-        <p>Encara no hi ha ressenyes</p>
+        <p>Encara no hi ha cap ressenya</p>
       </div>
     </div>
 
