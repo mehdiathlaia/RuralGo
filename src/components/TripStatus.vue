@@ -1,22 +1,22 @@
 <template>
   <div v-if="trip" class="trip-status-container">
     <div class="status-card">
-      <h3>📍 Estat del Viatge</h3>
+      <h3>📍 Estat del viatge</h3>
       
       <!-- Timeline de l'estat -->
       <div class="status-timeline">
         <div class="timeline-item" :class="{ active: statusCheck('waiting-driver') }">
           <div class="timeline-dot">⏳</div>
           <div class="timeline-text">
-            <p class="timeline-label">Cercant Conductor</p>
-            <p class="timeline-time" v-if="statusCheck('waiting-driver')">Buscant el conductor més apropiat...</p>
+            <p class="timeline-label">Cercant conductor</p>
+            <p class="timeline-time" v-if="statusCheck('waiting-driver')">Buscant el conductor més adequat…</p>
           </div>
         </div>
 
         <div class="timeline-item" :class="{ active: statusCheck('driver-assigned') }">
           <div class="timeline-dot">✓</div>
           <div class="timeline-text">
-            <p class="timeline-label">Conductor Assignat</p>
+            <p class="timeline-label">Conductor assignat</p>
             <p class="timeline-time" v-if="statusCheck('driver-assigned')">{{ trip.driver?.name || 'Assignant...' }}</p>
           </div>
         </div>
@@ -24,7 +24,7 @@
         <div class="timeline-item" :class="{ active: statusCheck('in-progress') }">
           <div class="timeline-dot">-</div>
           <div class="timeline-text">
-            <p class="timeline-label">En Ruta</p>
+            <p class="timeline-label">En ruta</p>
             <p class="timeline-time" v-if="statusCheck('in-progress')">
               {{ trip.remainingKm?.toFixed(1) }} km restants
             </p>
@@ -35,7 +35,7 @@
           <div class="timeline-dot">🎉</div>
           <div class="timeline-text">
             <p class="timeline-label">Arribat</p>
-            <p class="timeline-time" v-if="statusCheck('arrived')">Ja has arribat!</p>
+            <p class="timeline-time" v-if="statusCheck('arrived')">Has arribat!</p>
           </div>
         </div>
 
