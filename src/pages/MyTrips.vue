@@ -1,14 +1,14 @@
 <template>
   <div class="my-trips-page">
     <div class="header">
-      <h1>Els Meus Viatges</h1>
+      <h1>Els meus viatges</h1>
       <p>Viatges programats i historial</p>
     </div>
 
     <div class="trips-container">
-      <!-- Viatges Programats -->
+      <!-- Viatges programats -->
       <div class="trips-section">
-        <h2>📅 Viatges Programats</h2>
+        <h2>📅 Viatges programats</h2>
         
         <div v-if="plannedTrips.length === 0" class="no-trips">
           <p>No hi ha viatges programats en aquest moment</p>
@@ -69,9 +69,9 @@
         </div>
       </div>
 
-      <!-- Viatges Completats -->
+      <!-- Viatges completats -->
       <div class="trips-section">
-        <h2>Viatges Completats</h2>
+        <h2>Viatges completats</h2>
         
         <div v-if="completedTrips.length === 0" class="no-trips">
           <p>Encara no hi ha viatges completats</p>
@@ -133,7 +133,7 @@
 
         <div class="trip-full-details">
           <div class="detail-section">
-            <h3>Informació del Viatge</h3>
+            <h3>Informació del viatge</h3>
             <div class="detail-item">
               <span class="label">📅 Data:</span>
               <span class="value">{{ formatDate(selectedTrip.tripDate || selectedTrip.completedAt) }}</span>
@@ -181,7 +181,7 @@
           </div>
 
           <div v-if="selectedTrip.driverAssigned || selectedTrip.driverName" class="detail-section">
-            <h3>Informació del Conductor</h3>
+            <h3>Informació del conductor</h3>
             <div class="detail-item">
               <span class="label">Nom:</span>
               <span class="value">{{ selectedTrip.driverName }}</span>
@@ -205,7 +205,7 @@
           </div>
 
           <div v-if="selectedTrip.status === 'completed' && !selectedTrip.rating" class="detail-section">
-            <h3>Valorar el Viatge</h3>
+            <h3>Valora el viatge</h3>
             <div class="rating-stars">
               <button 
                 v-for="star in 5"
@@ -229,9 +229,9 @@
 
     <!-- Bottom Navigation -->
     <div class="bottom-links">
-      <router-link to="/planification" class="link">Programar nou viatge</router-link>
+      <router-link to="/planification" class="link">Programa un viatge nou</router-link>
       <router-link to="/profile" class="link">👤 Perfil</router-link>
-      <router-link to="/" class="link">← Tornar al menú</router-link>
+      <router-link to="/" class="link">← Torna al menú</router-link>
     </div>
   </div>
 </template>
