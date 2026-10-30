@@ -13,11 +13,12 @@ const pinia = createPinia();
 // IMPORTANTE: Pinia DEBE ir primero antes que router
 // porque el router guard intenta usar useAuthStore()
 app.use(pinia);
-app.use(router);
 
-// Restore the user session from MongoDB before mounting the app.
+// Restore the user session before the router performs its first navigation.
 const authStore = useAuthStore();
 await authStore.restoreSession();
+
+app.use(router);
 
 // Cargar datos guardados en localStorage cuando se inicializa la app
 const notificationStore = useNotificationStore();
