@@ -15,7 +15,10 @@ Configurar a Render, sense posar-les al repositori:
 - `ADMIN_EMAIL`: correu de l'administrador.
 - `ADMIN_PASSWORD`: contrasenya de l'administrador.
 - `JWT_SECRET`: secret aleatori llarg per signar tokens.
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`: credencials del proveïdor SMTP per enviar correus reals. Sense aquestes variables, la resolució es desa però no s'envia cap correu.
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`: credencials del proveïdor SMTP per enviar correus reals.
+- `FRONTEND_URL`: URL pública del frontend per construir els enllaços de recuperació (per defecte `https://ruralgo-app.vercel.app`).
+
+Sense SMTP configurat no s'envien correus d'aprovació, rebuig ni recuperació de contrasenya.
 
 No compartir ni versionar aquests valors. El token d'administració expira al cap de 8 hores.
 
@@ -26,6 +29,8 @@ No compartir ni versionar aquests valors. El token d'administració expira al ca
 - `PATCH /api/registration-requests/:id`: aprova o rebutja una sol·licitud només amb JWT d'administrador. En aprovar, crea un compte a MongoDB amb contrasenya temporal aleatòria i rol de client/conductor; en rebutjar, desa el motiu. També desa la data i l'administrador que ha revisat i intenta enviar el correu via SMTP.
 - `POST /api/auth/login`: valida correu i contrasenya contra els comptes MongoDB i retorna un JWT d'usuari.
 - `GET /api/auth/me`: valida el JWT d'usuari, comprova que el compte continua actiu i retorna les dades bàsiques per restaurar la sessió.
+- `POST /api/auth/forgot-password`: crea un token aleatori de recuperació, desa'n només el resum criptogràfic i envia un enllaç amb una validesa de 30 minuts. La resposta no revela si un correu existeix.
+- `POST /api/auth/reset-password`: valida el token no caducat, actualitza la contrasenya amb el hash del model i invalida el token.
 - `GET /api/health`: estat del servidor i de la connexió MongoDB.
 
 ## Model de dades
@@ -47,9 +52,13 @@ La col·lecció de sol·licituds desa tipus d'usuari, nom, correu, telèfon, DNI
 
 ## Limitacions conegudes / següents passos
 - El rebuig està implementat a l'API i al panell, però encara cal provar-lo amb una sol·licitud de prova.
+- La compilació de Vercel no s'ha pogut verificar en aquesta tanda: GitHub informa d'un límit de compilacions del compte (`build-rate-limit`).
 - El compte es crea en aprovar, però cal configurar SMTP perquè la persona rebi la contrasenya temporal. Si SMTP no està configurat o falla, l'administrador ha de gestionar la comunicació manualment.
 - El frontend d'accés consulta el login de MongoDB i restaura la sessió en recarregar la pàgina mitjançant `GET /api/auth/me`.
-- La protecció de totes les rutes i l'autorització de totes les operacions de negoci encara queden pendents; no s'ha de considerar complet el control d'accés de tota l'aplicació.
+- Les rutes privades del frontend comproven l'autenticació i el rol; el panell d'administració manté el seu mecanisme d'accés independent.
+- La interfície s'ha revisat per unificar el català, la terminologia, els estats i els missatges d'error en les pantalles principals.
+- El formulari d'accés incorpora recuperació i canvi de contrasenya. Per provar-ho cal configurar SMTP i `FRONTEND_URL` a Render.
+- La protecció de rutes del frontend no substitueix l'autorització del backend. Cal implementar i verificar autenticació/autorització per a cada endpoint de negoci quan aquests serveis es connectin al servidor.
 - Altres seccions del panell (usuaris, viatges, analítica i auditoria) encara depenen de dades locals/de demostració i no s'han migrat a MongoDB.
 - Cal revisar els camps addicionals del formulari (targeta sanitària i contacte d'emergència, entre d'altres) perquè actualment no tots formen part del model de sol·licitud del backend.
 
