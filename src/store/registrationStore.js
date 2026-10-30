@@ -25,9 +25,17 @@ export const useRegistrationStore = defineStore('registration', () => {
   };
 
   // Crear sol·licitud de registre
-  const createRegistrationRequest = (userData) => {
+  const createRegistrationRequest = async (userData) => {
+    const response = await fetch(`${API_URL}/registration-requests`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'Error en enviar la sol·licitud');
+
     const request = {
-      id: Date.now().toString(),
+      id: result.request.id,
       ...userData,
       status: 'pending',
       createdAt: new Date().toISOString(),
