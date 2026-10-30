@@ -114,7 +114,7 @@
               <span class="value">{{ type.passengers }}</span>
             </div>
             <div class="stat">
-              <span class="label">km:</span>
+              <span class="label">Quilòmetres:</span>
               <span class="value">{{ type.km.toFixed(1) }}</span>
             </div>
             <div class="stat">
