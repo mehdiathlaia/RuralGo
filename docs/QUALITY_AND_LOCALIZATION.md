@@ -69,3 +69,8 @@ Els canvis es desen a la branca principal i els desplegaments automàtics depene
 - Cal provar els endpoints de viatges amb comptes reals de passatger i conductor, incloent-hi intents d'accés creuat i transicions d'estat no permeses.
 - Cal revisar la consistència de valoracions i la finalització si es produeixen errors parcials en la base de dades.
 - El desplegament de Vercel continua subjecte al límit temporal del compte; els commits no garanteixen que el límit s'hagi aixecat.
+### API i automatització de desplegament (30/10/2026)
+- S'ha muntat el router autenticat de viatges a `/api/trips`; abans els controladors existien però no estaven connectats a Express.
+- La compilació de Vite de GitHub Actions ha finalitzat correctament en l'execució revisada.
+- La publicació a GitHub Pages fallava perquè `GITHUB_TOKEN` no tenia permís d'escriptura (`403`). S'ha afegit `permissions: contents: write` i s'han actualitzat les accions a versions més recents.
+- Cal confirmar el resultat de la nova execució després d'aquest canvi.
