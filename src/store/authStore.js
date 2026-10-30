@@ -67,7 +67,11 @@ export const useAuthStore = defineStore('auth', {
         this.setSessionTimeout();
         return true;
       } catch (error) {
-        this.loginError = error.message || 'No s’ha pogut iniciar sessió';
+        this.loginError = error?.name === 'TypeError'
+          ? 'No s’ha pogut connectar amb el servidor. Comprova la connexió i torna-ho a provar.'
+          : error?.name === 'SyntaxError'
+            ? 'El servidor ha retornat una resposta inesperada. Torna-ho a provar.'
+            : error.message || 'No s’ha pogut iniciar sessió';
         return false;
       }
     },
