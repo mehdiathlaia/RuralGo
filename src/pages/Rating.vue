@@ -1,7 +1,7 @@
 <template>
   <div class="rating-container">
     <div class="rating-card">
-      <h2>⭐ Valoració del Viatge</h2>
+      <h2>⭐ Valoració del viatge</h2>
 
       <div v-if="trip" class="trip-info">
         <div class="info-row">
@@ -39,7 +39,7 @@
 
       <!-- Categories de valoració -->
       <div class="categories-section">
-        <p class="rating-label">Valoracions específiques</p>
+        <p class="rating-label">Aspectes concrets</p>
         <div class="category-item">
           <span class="category-name">🧹 Neteja</span>
           <div class="category-stars">
@@ -103,7 +103,7 @@
 
       <!-- Comentaris -->
       <div class="comments-section">
-        <label for="comments" class="rating-label">💬 Comentaris (opcional)</label>
+        <label for="comments" class="rating-label">💬 Comentaris (opcionals)</label>
         <textarea 
           id="comments"
           v-model="comments"
