@@ -3,19 +3,19 @@
   <div v-if="showTerms" class="terms-modal-overlay">
     <div class="terms-modal">
       <div class="terms-modal-header">
-        <h2>Termes i Condicions</h2>
+        <h2>Termes i condicions</h2>
       </div>
 
       <div class="terms-modal-body">
-        <p class="intro-text">Per a continuar usant RURAL-GO VIVA, has d'acceptar els nostre termes i condicions.</p>
+        <p class="intro-text">Per continuar utilitzant RuralGo, has d’acceptar els termes i les condicions.</p>
 
         <div class="terms-content">
-          <h3>Ressum dels termes:</h3>
+          <h3>Resum dels termes:</h3>
           <ul>
-            <li>✓ <strong>Privacitat:</strong> Els teus dades es protegeixen amb encriptació de grau bancari</li>
+            <li>✓ <strong>Privacitat:</strong> Les teves dades es protegeixen amb xifratge</li>
             <li>✓ <strong>Seguretat:</strong> Tots els viatges són coberts per assegurança</li>
             <li>✓ <strong>Responsabilitat:</strong> Els conductors han de complir amb la normativa de trànsit</li>
-            <li>✓ <strong>Cancelacions:</strong> Pots cancel·lar viatges fins a 10 minuts abans de la sortida</li>
+            <li>✓ <strong>Cancelacions:</strong> Pots cancel·lar els viatges fins a 10 minuts abans de la sortida</li>
             <li>✓ <strong>Pagaments:</strong> Els pagaments es realitzen de manera segura i transparent</li>
             <li>✓ <strong>Suport:</strong> Tenim suport 24/7 en cas d'emergències</li>
           </ul>
@@ -41,7 +41,7 @@
   <div v-if="showFullTermsModal" class="terms-modal-overlay">
     <div class="terms-modal terms-modal-full">
       <div class="terms-modal-header">
-        <h2>Termes i Condicions Complets</h2>
+        <h2>Termes i condicions Complets</h2>
         <button @click="showFullTermsModal = false" class="modal-close-btn">
           <svg viewBox="0 0 24 24" width="24" height="24">
             <path :d="mdiClose" fill="currentColor" />
@@ -57,7 +57,7 @@
 
         <section>
           <h3>2. Descripció del Servei</h3>
-          <p>RURAL-GO VIVA és una plataforma de mobilitat rural que connecta clients amb conductors per a serveis de transport en àrees rurals. La nostra missió és garantir accessibilitat, seguretat i conforta en tota la xarxa.</p>
+          <p>RuralGo és una plataforma de mobilitat rural que connecta persones usuàries amb conductors per oferir serveis de transport en entorns rurals. La nostra missió és garantir l’accessibilitat, la seguretat i la comoditat.</p>
         </section>
 
         <section>
@@ -73,7 +73,7 @@
 
         <section>
           <h3>4. Política de Privacitat i Protecció de Dades</h3>
-          <p>Coleccionem informació personal necessària per proporcionar els serveis:</p>
+          <p>Recollim la informació personal necessària per prestar els serveis:</p>
           <ul>
             <li>Dades de registre (nom, email, telèfon)</li>
             <li>Informació de localització durant viatges</li>
@@ -98,15 +98,15 @@
           <h3>6. Polítiques de Cancelació</h3>
           <ul>
             <li><strong>Client:</strong> Pots cancel·lar fins a 10 minuts abans de la sortida sense penalitat</li>
-            <li><strong>Conductor:</strong> Cancel·lacions indiscriminades resultaran en l'eliminació del compte</li>
-            <li><strong>Causa major:</strong> Cancellacions per raons de força major no comporten multa</li>
+            <li><strong>Conductor:</strong> Les cancel·lacions reiterades i injustificades poden comportar mesures sobre el compte</li>
+            <li><strong>Causa major:</strong> Cancel·lacions per raons de força major no comporten multa</li>
           </ul>
         </section>
 
         <section>
           <h3>7. Polítiques de Pagament</h3>
           <ul>
-            <li>Els pagaments es processan de forma segura a través de plataformes certificades</li>
+            <li>Els pagaments es processen de manera segura a través de plataformes certificades</li>
             <li>Acceptem diverses formes de pagament (targeta de crèdit, efectiu, moneda digital)</li>
             <li>Els preus es mostren clarament abans de confirmar el viatge</li>
             <li>No hi ha sorpreses tarifàries - el preu final és exacte</li>
@@ -142,7 +142,7 @@
 
         <section>
           <h3>11. Resolució de Disputes</h3>
-          <p>Qualsevol disputa serà resuelta mitjançant:</p>
+          <p>Qualsevol controvèrsia es resoldrà mitjançant:</p>
           <ul>
             <li>Negociació amistosa</li>
             <li>Mediació (si la negociació falla)</li>
@@ -163,7 +163,7 @@
           Telèfon: +34 XXX XXX XXX</p>
         </section>
 
-        <p class="last-updated">Última actualització: December 16, 2025</p>
+        <p class="last-updated">Darrera actualització: 16 de desembre de 2025</p>
       </div>
 
       <div class="terms-modal-footer">
