@@ -6,7 +6,7 @@
         <svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true">
           <path :d="mdiCar" fill="currentColor" />
         </svg>
-        <h1>Panell del Conductor</h1>
+        <h1>Tauler del conductor</h1>
       </div>
       <div class="header-actions">
         <button 
@@ -64,7 +64,7 @@
           <path :d="mdiRoadVariant" fill="currentColor" />
         </svg>
         <div class="stat-content">
-          <p class="stat-label">KM Totals</p>
+          <p class="stat-label">Quilòmetres totals</p>
           <p class="stat-value">{{ driverStats.totalKms }} km</p>
         </div>
       </div>
@@ -73,7 +73,7 @@
           <path :d="mdiClockOutline" fill="currentColor" />
         </svg>
         <div class="stat-content">
-          <p class="stat-label">Hores En Línia</p>
+          <p class="stat-label">Hores en línia</p>
           <p class="stat-value">{{ driverStats.onlineHours }}h</p>
         </div>
       </div>
@@ -176,8 +176,8 @@
         <svg class="empty-icon-svg" viewBox="0 0 24 24">
           <path :d="mdiEarth" fill="currentColor" />
         </svg>
-        <p>No hi ha sol·licituds en aquest moment</p>
-        <p class="empty-subtitle">Estàs disponible. Rebràs una notificació quan arribi una nova sol·licitud.</p>
+        <p>Ara mateix no hi ha cap sol·licitud</p>
+        <p class="empty-subtitle">Estàs disponible. Rebràs un avís quan arribi una sol·licitud nova.</p>
       </div>
 
       <div v-else class="trips-grid">
@@ -244,8 +244,8 @@
       <svg class="empty-icon-svg" viewBox="0 0 24 24">
         <path :d="mdiAlert" fill="currentColor" />
       </svg>
-      <p>Estàs fora de línia</p>
-      <p class="empty-subtitle">Torna a connectar-te per rebre sol·licituds de viatge.</p>
+      <p>No estàs connectat</p>
+      <p class="empty-subtitle">Connecta’t per tornar a rebre sol·licituds de viatge.</p>
       <button @click="toggleOnlineStatus" class="btn btn-primary">
         <svg class="btn-icon" viewBox="0 0 24 24">
           <path :d="mdiCheckCircle" fill="currentColor" />
@@ -268,7 +268,7 @@
 
         <!-- Informació del viatge -->
         <div class="trip-info-section">
-          <h3>Informació del Viatge</h3>
+          <h3>Informació del viatge</h3>
           <div class="info-grid">
             <div class="info-item">
               <svg class="detail-icon" viewBox="0 0 24 24">
