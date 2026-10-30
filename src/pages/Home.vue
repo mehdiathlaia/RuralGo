@@ -317,7 +317,7 @@ const scrollToSection = (sectionId) => {
 }
 
 /* Existing feature card styles */
-.feature-card-original {
+.feature-card {
   padding: 40px;
   border-radius: 12px;
   background: white;
@@ -557,5 +557,22 @@ const scrollToSection = (sectionId) => {
   .steps-grid {
     gap: clamp(15px, 2vh, 25px);
   }
+}
+
+/* Acabat visual de la pàgina d'inici */
+.hero {
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(20, 60, 48, .12);
+}
+.hero-title { letter-spacing: -1.5px; line-height: 1.05; }
+.feature-card {
+  border: 1px solid rgba(46, 125, 110, .12);
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(20, 60, 48, .06);
+}
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 36px rgba(20, 60, 48, .12);
 }
 </style>
