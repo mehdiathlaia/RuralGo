@@ -887,7 +887,15 @@ const saveEditedUser = () => {
   }
 };
 
-const approveRegistration = async (request) => { try { await registrationStore.updateRegistrationStatus(request.id, 'approved'); adminStore.logAction('APPROVE_REGISTRATION', 'Solicitud aprobada: ' + request.name); } catch (error) { alert(error.message); } };
+const approveRegistration = async (request) => {
+  try {
+    const result = await registrationStore.updateRegistrationStatus(request.id, 'approved');
+    adminStore.logAction('APPROVE_REGISTRATION', 'Solicitud aprobada: ' + request.name);
+    alert(result.emailSent
+      ? 'Solicitud aprobada, cuenta creada y correo enviado.'
+      : 'Solicitud aprobada y cuenta creada. Falta configurar el correo SMTP para enviar las credenciales.');
+  } catch (error) { alert(error.message); }
+};
 
 const rejectRegistration = async () => {
   if (!rejectionReason.value.trim()) {
@@ -896,11 +904,12 @@ const rejectRegistration = async () => {
   }
   if (selectedRequest.value) {
     try {
-      await registrationStore.updateRegistrationStatus(selectedRequest.value.id, 'rejected', rejectionReason.value);
+      const result = await registrationStore.updateRegistrationStatus(selectedRequest.value.id, 'rejected', rejectionReason.value);
       adminStore.logAction('REJECT_REGISTRATION', `Sol·licitud rebutjada: ${selectedRequest.value.name} - ${rejectionReason.value}`);
       showRejectDialog.value = false;
       selectedRequest.value = null;
       rejectionReason.value = '';
+      alert(result.emailSent ? 'Solicitud rechazada y correo enviado.' : 'Solicitud rechazada. Falta configurar SMTP para notificar por correo.');
     } catch (error) { alert(error.message || 'No se pudo rechazar la solicitud'); }
   }
 };
