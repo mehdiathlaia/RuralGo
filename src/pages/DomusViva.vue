@@ -1,8 +1,8 @@
 <template>
   <div class="domus-viva-container">
     <div class="page-header">
-      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiTheater" fill="currentColor" /></svg> Domus Viva - Activitats Recomanades</h1>
-      <p>Descobreix activitats culturals i socials adaptades a tu</p>
+      <h1><svg class="header-icon" viewBox="0 0 24 24"><path :d="mdiTheater" fill="currentColor" /></svg> Domus Viva - Activitats recomanades</h1>
+      <p>Descobreix activitats culturals i socials adaptades a les teves preferències</p>
     </div>
 
     <!-- Recomanació del dia -->
@@ -99,18 +99,18 @@
             <span v-for="tag in activity.tags" :key="tag" class="tag">{{ tag }}</span>
           </div>
 
-          <button class="btn btn-primary">Veure detalls</button>
+          <button class="btn btn-primary">Mostra els detalls</button>
         </div>
       </div>
       <div v-else class="empty-state">
-        <p>No hi ha activitats disponibles en aquesta categoria</p>
+        <p>No hi ha activitats disponibles per a aquesta categoria</p>
       </div>
     </div>
 
     <!-- Activitats accessibles -->
     <div class="accessible-section">
       <h2>♿ Activitats accessibles</h2>
-      <p class="section-desc">Activitats de baixa dificultats i preu assequible per a tothom</p>
+      <p class="section-desc">Activitats de baixa dificultat i preu assequible per a tothom</p>
       
       <div v-if="accessibleActivities.length > 0" class="activities-carousel">
         <div 
@@ -132,7 +132,7 @@
     <!-- Personalitzades -->
     <div class="personalized-section">
       <h2><svg class="section-icon" viewBox="0 0 24 24"><path :d="mdiStar" fill="currentColor" /></svg> Recomanades per a tu</h2>
-      <p class="section-desc">Basades en els teus interessos</p>
+      <p class="section-desc">Segons els teus interessos</p>
       
       <div v-if="personalizedRecs.length > 0" class="personalized-grid">
         <div 
