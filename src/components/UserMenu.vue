@@ -50,7 +50,7 @@
           <svg class="menu-icon" viewBox="0 0 24 24">
             <path :d="mdiLogout" fill="currentColor" />
           </svg>
-          <span>Tancar Sessió</span>
+          <span>Tanca la sessió</span>
         </button>
       </div>
     </div>
