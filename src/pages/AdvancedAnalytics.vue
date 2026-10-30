@@ -2,31 +2,31 @@
   <div class="advanced-analytics-page">
     <div class="page-header">
       <h1>📈 Analítiques avançades - RURAL-GO VIVA</h1>
-      <p>Dashboard d'analítiques per a decisions municipals estratègiques</p>
+      <p>Tauler d’anàlisi per donar suport a les decisions municipals</p>
     </div>
 
     <!-- Dates selector -->
     <div class="date-range-selector">
       <div class="date-input-group">
-        <label>Data inici</label>
+        <label>Data d’inici</label>
         <input v-model="dateStart" type="date" class="date-input">
       </div>
       <div class="date-input-group">
-        <label>Data fi</label>
+        <label>Data de finalització</label>
         <input v-model="dateEnd" type="date" class="date-input">
       </div>
-      <button @click="applyDateRange" class="btn btn-primary">Aplicar filtre</button>
-      <button @click="downloadData" class="btn btn-success">📥 Descarregar CSV</button>
+      <button @click="applyDateRange" class="btn btn-primary">Aplica el filtre</button>
+      <button @click="downloadData" class="btn btn-success">📥 Baixa el CSV</button>
     </div>
 
     <!-- KPIs Principals -->
     <div class="kpis-section">
-      <h2>📊 Indicadors principals (KPI)</h2>
+      <h2>📊 Indicadors principals</h2>
       <div class="kpis-grid">
         <div class="kpi-card">
           <div class="kpi-icon">👥</div>
           <div class="kpi-content">
-            <div class="kpi-label">Taxa d'ocupació</div>
+            <div class="kpi-label">Taxa d’ocupació</div>
             <div class="kpi-value">{{ kpis.occupancyRate }}</div>
             <div class="kpi-desc">Passatgers per trajecte</div>
           </div>
@@ -55,7 +55,7 @@
           <div class="kpi-content">
             <div class="kpi-label">Eficiència</div>
             <div class="kpi-value">{{ kpis.efficiency }}</div>
-            <div class="kpi-desc">Utilització de recursos</div>
+            <div class="kpi-desc">Ús dels recursos</div>
           </div>
         </div>
       </div>
@@ -92,9 +92,9 @@
       </div>
     </div>
 
-    <!-- Analisi per tipus de viatge -->
+    <!-- Anàlisi per tipus de viatge -->
     <div class="analysis-section">
-      <h2>🚕 Analisi per tipus de vehicle</h2>
+      <h2>🚕 Anàlisi per tipus de vehicle</h2>
       <div class="analysis-grid">
         <div v-for="type in typeAnalysis" :key="type.type" class="analysis-card">
           <div class="card-header">
@@ -126,9 +126,9 @@
       </div>
     </div>
 
-    <!-- Analisi regional -->
+    <!-- Anàlisi regional -->
     <div class="analysis-section">
-      <h2>🗺️ Analisi per regió</h2>
+      <h2>🗺️ Anàlisi per regió</h2>
       <div class="regional-table">
         <table>
           <thead>
@@ -181,24 +181,24 @@
       </div>
     </div>
 
-    <!-- Prediccions -->
+    <!-- Previsions -->
     <div class="analysis-section">
-      <h2>🔮 Prediccions</h2>
+      <h2>🔮 Previsions</h2>
       <div class="predictions-cards">
         <div class="prediction-card">
-          <h3>Viatges setmanal estimat</h3>
+          <h3>Viatges setmanals estimats</h3>
           <div class="prediction-value">{{ predictions.estimatedWeeklyTrips }}</div>
           <p class="confidence">Confiança: {{ (predictions.confidence * 100).toFixed(0) }}%</p>
         </div>
         <div class="prediction-card">
-          <h3>Viatges mensual estimat</h3>
+          <h3>Viatges mensuals estimats</h3>
           <div class="prediction-value">{{ predictions.estimatedMonthlyTrips }}</div>
           <p class="confidence">Tendència: {{ predictions.trend }}</p>
         </div>
         <div class="prediction-card">
           <h3>Cost mensual estimat</h3>
           <div class="prediction-value">{{ predictions.estimatedMonthlyCost }}€</div>
-          <p class="confidence">Estimació per a propera</p>
+          <p class="confidence">Estimació del període vinent</p>
         </div>
       </div>
     </div>
@@ -308,7 +308,7 @@ const loadAnalytics = () => {
 
 const applyDateRange = () => {
   // Cargar dades per rang de dates
-  console.log('Aplicar filtre:', dateStart.value, 'a', dateEnd.value);
+  console.log('Aplica el filtre:', dateStart.value, 'a', dateEnd.value);
   loadAnalytics();
 };
 
