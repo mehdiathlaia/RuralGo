@@ -25,6 +25,7 @@ No compartir ni versionar aquests valors. El token d'administració expira al ca
 - `GET /api/registration-requests`: retorna sol·licituds només amb JWT d'administrador vàlid.
 - `PATCH /api/registration-requests/:id`: aprova o rebutja una sol·licitud només amb JWT d'administrador. En aprovar, crea un compte a MongoDB amb contrasenya temporal aleatòria i rol de client/conductor; en rebutjar, desa el motiu. També desa la data i l'administrador que ha revisat i intenta enviar el correu via SMTP.
 - `POST /api/auth/login`: valida correu i contrasenya contra els comptes MongoDB i retorna un JWT d'usuari.
+- `GET /api/auth/me`: valida el JWT d'usuari, comprova que el compte continua actiu i retorna les dades bàsiques per restaurar la sessió.
 - `GET /api/health`: estat del servidor i de la connexió MongoDB.
 
 ## Model de dades
@@ -47,7 +48,8 @@ La col·lecció de sol·licituds desa tipus d'usuari, nom, correu, telèfon, DNI
 ## Limitacions conegudes / següents passos
 - El rebuig està implementat a l'API i al panell, però encara cal provar-lo amb una sol·licitud de prova.
 - El compte es crea en aprovar, però cal configurar SMTP perquè la persona rebi la contrasenya temporal. Si SMTP no està configurat o falla, l'administrador ha de gestionar la comunicació manualment.
-- El frontend d'accés consulta ara el login de MongoDB; la integració completa de tokens amb totes les rutes encara queda pendent.
+- El frontend d'accés consulta el login de MongoDB i restaura la sessió en recarregar la pàgina mitjançant `GET /api/auth/me`.
+- La protecció de totes les rutes i l'autorització de totes les operacions de negoci encara queden pendents; no s'ha de considerar complet el control d'accés de tota l'aplicació.
 - Altres seccions del panell (usuaris, viatges, analítica i auditoria) encara depenen de dades locals/de demostració i no s'han migrat a MongoDB.
 - Cal revisar els camps addicionals del formulari (targeta sanitària i contacte d'emergència, entre d'altres) perquè actualment no tots formen part del model de sol·licitud del backend.
 
