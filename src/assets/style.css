@@ -547,3 +547,66 @@ label {
   white-space: nowrap;
   border-width: 0;
 }
+
+
+/* Visual refinement: consistent surfaces, focus states and motion. */
+:root {
+  --surface: #ffffff;
+  --surface-soft: #f4f8f6;
+  --text-muted: #64748b;
+  --radius-card: 18px;
+}
+
+body {
+  background: #f5f8f6;
+  color: #18332d;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, .btn, a, input, textarea, select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 3px solid rgba(46, 125, 110, .35);
+  outline-offset: 3px;
+}
+
+.card, .feature-card, .auth-card, .stat-card, .dashboard-card {
+  border-radius: var(--radius-card);
+  box-shadow: 0 8px 28px rgba(25, 55, 46, .07);
+}
+
+.card:hover, .feature-card:hover, .dashboard-card:hover {
+  box-shadow: 0 14px 34px rgba(25, 55, 46, .11);
+}
+
+.btn, button {
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+}
+
+.btn:active, button:active {
+  transform: translateY(1px);
+}
+
+input, textarea, select {
+  border-radius: 10px;
+  border-color: #dce7e1;
+}
+
+input:hover, textarea:hover, select:hover {
+  border-color: #a9c8bb;
+}
+
+::selection {
+  color: #fff;
+  background: #2e7d6e;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
