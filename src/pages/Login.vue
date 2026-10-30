@@ -416,7 +416,8 @@ const submitRegistrationRequest = async () => {
       mode.value = 'login';
     }, 3000);
   } catch (err) {
-    alert('Error en enviar la sol·licitud. Si us plau intenta de nou.');
+    console.error('Error en enviar la sol·licitud:', err);
+    alert(err?.message || 'No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.');
   }
 };
 
