@@ -118,7 +118,7 @@
       </div>
 
       <div class="form-group">
-        <label>Nombre d'assistents</label>
+        <label>Nombre de persones</label>
         <div class="assistants-input-container">
           <button 
             @click="decreaseAssistants" 
@@ -143,7 +143,7 @@
             +
           </button>
         </div>
-        <p class="assistants-help">Màxim 3 assistents</p>
+        <p class="assistants-help">Màxim de 3 persones</p>
       </div>
 
       <div class="form-group">
@@ -166,7 +166,7 @@
       </div>
 
       <div class="form-group">
-        <label>Estat de la via</label>
+        <label>Estat de la carretera</label>
         <div class="path-options">
           <button 
             v-for="path in pathConditions"
@@ -239,15 +239,15 @@ Confirmar i buscar conductor
 
       <div v-if="assigningDriver" class="loading-section">
         <div class="spinner"></div>
-        <p>Buscant el conductor més proper...</p>
+        <p>Buscant el conductor més proper…</p>
       </div>
 
       <div v-if="driverAssigned" class="success-section">
         <svg class="success-icon" viewBox="0 0 24 24">
           <path :d="mdiCheckCircle" fill="currentColor" />
         </svg>
-        <p><strong>¡Conductor assignat!</strong></p>
-        <p>Ja pots veure el seguiment en temps real.</p>
+        <p><strong>Conductor assignat!</strong></p>
+        <p>Ja pots consultar el trajecte en temps real.</p>
       </div>
     </div>
   </div>
