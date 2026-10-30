@@ -31,7 +31,8 @@ export const useAuthStore = defineStore('auth', {
         const response = await fetch('https://ruralgo-backend-ighg.onrender.com/api/auth/me', {
           headers: { Authorization: 'Bearer ' + token }
         });
-        if (!response.ok) throw new Error('Session expired');
+        if (response.status === 401 || response.status === 403) throw new Error('Sessió caducada');
+        if (!response.ok) return false;
         const result = await response.json();
         this.currentUser = { ...result.user, role: result.user.role === 'passenger' ? 'client' : result.user.role };
         this.isAuthenticated = true;
