@@ -59,6 +59,23 @@ function requireAdmin(req, res, next) {
   } catch (error) { return res.status(401).json({ message: 'Sesión inválida o caducada' }); }
 }
 
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const email = String((req.body || {}).email || '').trim().toLowerCase();
+    const password = String((req.body || {}).password || '');
+    if (!email || !password) return res.status(400).json({ message: 'Correu i contrasenya obligatoris' });
+    const user = await User.findOne({ email });
+    if (!user || !user.isActive || !(await user.comparePassword(password))) {
+      return res.status(401).json({ message: 'Correu o contrasenya incorrectes' });
+    }
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    return res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, phone: user.phone, rating: user.rating } });
+  } catch (error) {
+    console.error('User login error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut iniciar sessió' });
+  }
+});
+
 app.post('/api/admin/login', (req, res) => {
   const email = String((req.body || {}).email || '').trim().toLowerCase();
   const password = String((req.body || {}).password || '');
