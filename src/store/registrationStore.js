@@ -5,6 +5,56 @@ const API_URL = 'https://ruralgo-backend-ighg.onrender.com/api';
 
 export const useRegistrationStore = defineStore('registration', () => {
   const pendingRequests = ref([]);
+  const adminToken = ref(localStorage.getItem('ruralgoAdminToken') || '');
+  const adminEmail = ref(localStorage.getItem('ruralgoAdminEmail') || '');
+  const adminAuthenticated = computed(() => !!adminToken.value);
+  const adminHeaders = () => ({ Authorization: 'Bearer ' + adminToken.value });
+
+  const adminLogin = async (email, password) => {
+    const response = await fetch(API_URL + '/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'No se pudo iniciar sesión');
+    adminToken.value = result.token;
+    adminEmail.value = result.email;
+    localStorage.setItem('ruralgoAdminToken', result.token);
+    localStorage.setItem('ruralgoAdminEmail', result.email);
+    return result;
+  };
+
+  const adminLogout = () => {
+    adminToken.value = '';
+    adminEmail.value = '';
+    localStorage.removeItem('ruralgoAdminToken');
+    localStorage.removeItem('ruralgoAdminEmail');
+    pendingRequests.value = [];
+  };
+
+  const loadRegistrationRequests = async () => {
+    if (!adminToken.value) throw new Error('Inicia sesión como administrador');
+    const response = await fetch(API_URL + '/registration-requests', { headers: adminHeaders() });
+    const result = await response.json();
+    if (response.status === 401 || response.status === 403) adminLogout();
+    if (!response.ok) throw new Error(result.message || 'No se pudieron cargar las solicitudes');
+    pendingRequests.value = result.filter(request => request.status === 'pending').map(request => ({ ...request, id: request._id }));
+    return result;
+  };
+
+  const updateRegistrationStatus = async (requestId, status, rejectionReason = '') => {
+    const response = await fetch(API_URL + '/registration-requests/' + requestId, {
+      method: 'PATCH',
+      headers: { ...adminHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, rejectionReason })
+    });
+    const result = await response.json();
+    if (response.status === 401 || response.status === 403) adminLogout();
+    if (!response.ok) throw new Error(result.message || 'No se pudo actualizar la solicitud');
+    pendingRequests.value = pendingRequests.value.filter(request => request.id !== requestId);
+    return result.request;
+  };
   const approvedUsers = ref([]);
 
   // Carregar des de localStorage al inicialitzar
@@ -180,6 +230,13 @@ export const useRegistrationStore = defineStore('registration', () => {
   return {
     pendingRequests,
     approvedUsers,
+    adminToken,
+    adminEmail,
+    adminAuthenticated,
+    adminLogin,
+    adminLogout,
+    loadRegistrationRequests,
+    updateRegistrationStatus,
     loadFromLocalStorage,
     saveToLocalStorage,
     createRegistrationRequest,
