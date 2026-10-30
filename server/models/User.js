@@ -44,6 +44,8 @@ const userSchema = new mongoose.Schema({
     longitude: Number,
     address: String
   },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   isActive: {
     type: Boolean,
     default: true
