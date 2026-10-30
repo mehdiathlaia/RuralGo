@@ -76,6 +76,67 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const email = String((req.body || {}).email || '').trim().toLowerCase();
+    if (!email) return res.status(400).json({ message: 'Introdueix el correu electrònic.' });
+    const user = await User.findOne({ email, isActive: true });
+    if (user) {
+      const rawToken = crypto.randomBytes(32).toString('hex');
+      user.passwordResetToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+      user.passwordResetExpires = new Date(Date.now() + 30 * 60 * 1000);
+      await user.save();
+      const frontendUrl = String(process.env.FRONTEND_URL || 'https://ruralgo-app.vercel.app').replace(/\/$/, '');
+      const resetUrl = frontendUrl + '/login?resetToken=' + rawToken;
+      try {
+        const mailer = createMailer();
+        if (!mailer) {
+          user.passwordResetToken = undefined;
+          user.passwordResetExpires = undefined;
+          await user.save();
+          return res.status(503).json({ message: 'La recuperació no està disponible: falta configurar el servei de correu. Contacta amb administració.' });
+        }
+        await mailer.sendMail({
+          from: process.env.SMTP_FROM,
+          to: user.email,
+          subject: 'RURAL-GO | Restabliment de contrasenya',
+          text: 'Hola ' + user.name + ',\n\nHas sol·licitat restablir la contrasenya. Obre aquest enllaç (vàlid durant 30 minuts):\n' + resetUrl + '\n\nSi no has fet aquesta sol·licitud, ignora aquest missatge.'
+        });
+      } catch (mailError) {
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+        await user.save();
+        console.error('Password reset email failed:', mailError.message);
+        return res.status(503).json({ message: 'No s’ha pogut enviar el correu. Torna-ho a provar més tard.' });
+      }
+    }
+    return res.json({ message: 'Si el correu correspon a un compte actiu, rebràs un enllaç per restablir la contrasenya.' });
+  } catch (error) {
+    console.error('Forgot password error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut processar la sol·licitud.' });
+  }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const token = String((req.body || {}).token || '');
+    const password = String((req.body || {}).password || '');
+    if (!token || password.length < 10) return res.status(400).json({ message: 'La contrasenya ha de tenir almenys 10 caràcters.' });
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const user = await User.findOne({ passwordResetToken: hashedToken, passwordResetExpires: { $gt: new Date() }, isActive: true });
+    if (!user) return res.status(400).json({ message: 'L’enllaç és invàlid o ha caducat. Sol·licita’n un de nou.' });
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+    return res.json({ message: 'La contrasenya s’ha actualitzat. Ja pots iniciar sessió.' });
+  } catch (error) {
+    console.error('Reset password error:', error.message);
+    return res.status(500).json({ message: 'No s’ha pogut actualitzar la contrasenya.' });
+  }
+});
+
 app.get('/api/auth/me', async (req, res) => {
   try {
     const token = String(req.headers.authorization || '').replace(/^Bearer\\s+/i, '');
