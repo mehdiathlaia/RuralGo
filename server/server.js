@@ -117,7 +117,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
   try {
     const token = String((req.body || {}).token || '');
     const password = String((req.body || {}).password || '');
-    if (!token || password.length < 10) return res.status(400).json({ message: 'La contrasenya ha de tenir almenys 10 caràcters.' });
+    if (!token || password.length < 10 || Buffer.byteLength(password, 'utf8') > 72) return res.status(400).json({ message: 'La contrasenya ha de tenir entre 10 i 72 bytes.' });
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     const user = await User.findOne({ passwordResetToken: hashedToken, passwordResetExpires: { $gt: new Date() }, isActive: true });
     if (!user) return res.status(400).json({ message: 'L’enllaç és invàlid o ha caducat. Sol·licita’n un de nou.' });
