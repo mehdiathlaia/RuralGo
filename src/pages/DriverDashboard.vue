@@ -358,8 +358,7 @@
 <script setup>
 import { ref, computed, watch, nextTick, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useTripStore } from '../store/tripStore';
-import { useNotificationStore } from '../store/notificationStore';
+import { useTripStoreBackend } from '../store/tripStoreBackend';
 import { useAuthStore } from '../store/authStore';
 import { googleMapsService } from '../services/googleMapsService';
 import {
@@ -390,34 +389,30 @@ import {
 } from '@mdi/js'
 
 const router = useRouter();
-const store = useTripStore();
-const notificationStore = useNotificationStore();
+const store = useTripStoreBackend();
 const authStore = useAuthStore();
 
 const isOnline = ref(true);
 const selectedTrip = ref(null);
-const driverId = computed(() => authStore.currentUser?.id || 2);
+const driverId = computed(() => authStore.currentUser?.id || null);
 // Obtenir el viatge actual (acceptat per aquest conductor)
 const currentTrip = computed(() => {
-  const trip = notificationStore.activeTrips[driverId.value] || null;
-  const allKeys = Object.keys(notificationStore.activeTrips);
-
-  return trip;
+  return store.activeTrips.find(trip => ['accepted', 'started'].includes(trip.status)) || null;
 });
 
 let map1 = null;
 let map2 = null;
 
 const driverStats = ref({
-  tripsToday: 7,
-  rating: 4.8,
-  totalKms: 356,
-  earnings: 124.60,
-  onlineHours: 8
+  tripsToday: 0,
+  rating: Number(authStore.currentUser?.rating || 0),
+  totalKms: 0,
+  earnings: 0,
+  onlineHours: 0
 });
 
 // Obtenir viatges pendents del notificationStore
-const availableTrips = computed(() => notificationStore.pendingTrips);
+const availableTrips = computed(() => store.activeTrips.filter(trip => trip.status === 'requested'));
 
 // Funcions Auxiliars
 const getServiceName = (serviceId) => {
