@@ -491,115 +491,37 @@ const getStatusIcon = (status) => {
   return icons[status] || mdiAlert;
 };
 
-const calculateDistance = (trip) => {
-  const driverLocation = { lat: 41.3, lng: 2.0 };
-  const R = 6371;
-  const dLat = (trip.clientLocation.lat - driverLocation.lat) * Math.PI / 180;
-  const dLng = (trip.clientLocation.lng - driverLocation.lng) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(driverLocation.lat * Math.PI / 180) * Math.cos(trip.clientLocation.lat * Math.PI / 180) *
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  return (R * c).toFixed(1);
-};
-
-// Accions
-const toggleOnlineStatus = () => {
-  isOnline.value = !isOnline.value;
-  
-  if (isOnline.value) {
-    // Posar online
-    notificationStore.setDriverOnline(driverId.value);
-    notificationStore.showToast('✓ Estàs en línia! Rebent sol·licituds...', 'success');
-  } else {
-    // Posar offline
-    notificationStore.setDriverOffline(driverId.value);
-    notificationStore.showToast('Has estat desconnectat.', 'info');
-  }
-};
-
-const acceptTrip = (tripId) => {
-  // tripId aquí es el ID del notificationStore
-  const trip = availableTrips.value.find(t => t.id === tripId);
-  if (trip) {
-    // Acceptar el viatge via notificationStore
-    const driverName = authStore.currentUser?.name || 'Conductor';
-    const driverPhone = authStore.currentUser?.phone || '934 567 890';
-    
-    const result = notificationStore.acceptTrip(tripId, driverId.value, driverName, driverPhone);
-    
-    // Actualitzar el viatge en tripStore si existeix
-    if (result && result.tripStoreId) {
-      const tripInStore = store.trips.find(t => t.id === result.tripStoreId);
-      if (tripInStore) {
-        tripInStore.status = 'assigned';
-        tripInStore.driverName = driverName;
-        tripInStore.driverPhone = driverPhone;
-        tripInStore.driverAssigned = true;
-        const driverLocation = { lat: 41.3, lng: 2.0 }; // Ubicació actual del conductor
-        tripInStore.driver = {
-          id: driverId.value,
-          name: driverName,
-          phone: driverPhone,
-          location: driverLocation
-        };
-      }
-    }
-    
+const calculateDistance = trip => Number(trip.estimatedDistance || 0).toFixed(1);
+const toggleOnlineStatus = () => { isOnline.value = !isOnline.value; };
+const acceptTrip = async tripId => {
+  try {
+    await store.acceptTrip(tripId);
     selectedTrip.value = null;
-    
-    notificationStore.showToast(`✓ Viatge acceptat! Dirigint-se al client...`, 'success');
+    await store.getActiveTrips();
+    await store.getTripHistory();
+  } catch (error) {
+    alert(error.message || 'No s’ha pogut acceptar el viatge.');
+    await store.getActiveTrips();
   }
 };
-
-const rejectTrip = (tripId) => {
-  const trip = notificationStore.pendingTrips.find(t => t.id === tripId);
-  if (trip) {
-    // Eliminar manualment de pending trips (en un sistema real, notificar el servidor)
-    notificationStore.pendingTrips = notificationStore.pendingTrips.filter(t => t.id !== tripId);
-    notificationStore.saveToLocalStorage();
-    selectedTrip.value = null;
-    notificationStore.showToast('Viatge rebutjat.', 'info');
-  }
+const rejectTrip = tripId => {
+  selectedTrip.value = null;
+  alert('La sol·licitud no s’ha modificat. No hi ha cap operació de rebuig disponible al servidor.');
 };
-
-const startTrip = () => {
-  if (currentTrip.value) {
-    currentTrip.value.status = 'in-progress';
-    driverStats.value.tripsToday++;
-  }
+const startTrip = async () => {
+  if (!currentTrip.value) return;
+  try { await store.startTrip(currentTrip.value._id); await store.getActiveTrips(); }
+  catch (error) { alert(error.message || 'No s’ha pogut iniciar el viatge.'); }
 };
-
-const markArrived = () => {
-  if (currentTrip.value) {
-    currentTrip.value.status = 'arrived';
-  }
+const markArrived = () => alert('El registre d’arribada encara no està disponible.');
+const completeTrip = async () => {
+  if (!currentTrip.value) return;
+  try {
+    await store.completeTrip(currentTrip.value._id, {});
+    await store.getActiveTrips();
+    await store.getTripHistory();
+  } catch (error) { alert(error.message || 'No s’ha pogut completar el viatge.'); }
 };
-
-const completeTrip = () => {
-  if (currentTrip.value) {
-    const distance = 2.5;
-    const duration = 18;
-    const earnings = distance * 0.35;
-    
-    driverStats.value.totalKms += distance;
-    driverStats.value.earnings += earnings;
-    
-    // Notificar via notificationStore
-    const tripId = currentTrip.value.id;
-    notificationStore.completeTrip(tripId, driverId.value, distance, duration, earnings);
-    
-    notificationStore.showToast(`✓ Viatge complet! Ingressos: +€${earnings.toFixed(2)} (${distance} km)`, 'success');
-    
-    // Reinicialitzar estat
-    store.trip = null;
-    store.completeTrip('ok');
-    
-    driverStats.value.tripsToday++;
-  }
-};
-
 const reportProblem = () => {
   alert('Has reportat un problema. L\'equip de suport contactarà aviat.');
 };
