@@ -255,7 +255,16 @@ const statistics = computed(() => {
 
 // Filtered trips
 const filteredTrips = computed(() => {
-  let filtered = displayedTrips.value;\n\n  if (filterStartDate.value) {\n    const start = new Date(`${filterStartDate.value}T00:00:00`);\n    filtered = filtered.filter(t => new Date(t.createdAt) >= start);\n  }\n  if (filterEndDate.value) {\n    const end = new Date(`${filterEndDate.value}T23:59:59.999`);\n    filtered = filtered.filter(t => new Date(t.createdAt) <= end);\n  }
+  let filtered = displayedTrips.value;
+
+  if (filterStartDate.value) {
+    const start = new Date(`${filterStartDate.value}T00:00:00`);
+    filtered = filtered.filter(t => new Date(t.createdAt) >= start);
+  }
+  if (filterEndDate.value) {
+    const end = new Date(`${filterEndDate.value}T23:59:59.999`);
+    filtered = filtered.filter(t => new Date(t.createdAt) <= end);
+  }
 
   if (filterService.value) {
     filtered = filtered.filter(t => t.service === filterService.value);
