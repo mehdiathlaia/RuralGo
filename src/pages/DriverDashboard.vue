@@ -412,7 +412,7 @@ const driverStats = ref({
 });
 
 // Obtenir viatges pendents del notificationStore
-const availableTrips = computed(() => store.activeTrips.filter(trip => trip.status === 'requested'));
+const availableTrips = computed(() => store.activeTrips.filter(trip => trip.status === 'requested').map(trip => ({ ...trip, id: trip._id, service: trip.serviceType, pickup: trip.pickupLocation?.address || 'Origen no indicat', destination: trip.dropoffLocation?.address || 'Destinació no indicada', clientName: trip.passengerId?.name || 'Passatger', clientLocation: trip.pickupLocation?.latitude != null ? { lat: trip.pickupLocation.latitude, lng: trip.pickupLocation.longitude } : null, destinationCoords: trip.dropoffLocation?.latitude != null ? { lat: trip.dropoffLocation.latitude, lng: trip.dropoffLocation.longitude } : null })));
 
 // Funcions Auxiliars
 const getServiceName = (serviceId) => {
