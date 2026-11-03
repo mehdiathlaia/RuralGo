@@ -93,7 +93,7 @@ exports.login = async (req, res) => {
 // Obtener perfil del usuario
 exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.userId).select('-password -passwordResetToken -passwordResetExpires');
     if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
@@ -107,14 +107,19 @@ exports.getProfile = async (req, res) => {
 // Actualizar perfil
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, phone, profilePicture } = req.body;
-
-    const user = await User.findByIdAndUpdate(
-      req.userId,
-      { name, phone, profilePicture },
-      { new: true }
-    );
-
+    const updates = {};
+    if (typeof req.body.name === 'string') updates.name = req.body.name.trim();
+    if (typeof req.body.phone === 'string') updates.phone = req.body.phone.trim();
+    if (typeof req.body.profilePicture === 'string' || req.body.profilePicture === null) updates.profilePicture = req.body.profilePicture;
+    if (updates.name !== undefined && updates.name.length < 2) {
+      return res.status(400).json({ message: 'El nom ha de tenir almenys 2 caràcters' });
+    }
+    if (updates.phone !== undefined && updates.phone.length < 6) {
+      return res.status(400).json({ message: 'El telèfon no és vàlid' });
+    }
+    const user = await User.findByIdAndUpdate(req.userId, { $set: updates }, { new: true, runValidators: true })
+      .select('-password -passwordResetToken -passwordResetExpires');
+    if (!user) return res.status(404).json({ message: 'Usuari no trobat' });
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
