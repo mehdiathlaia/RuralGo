@@ -15,7 +15,7 @@ const api = axios.create({
 
 // Interceptor para agregar token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('ruralgoUserToken') || localStorage.getItem('authToken');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
