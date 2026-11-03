@@ -271,99 +271,29 @@ const router = useRouter();
 const activeTab = ref('personal');
 
 const profileData = ref({
-  fullName: 'Joan Xifré García',
-  email: 'joan@example.com',
-  phone: '622 445 556',
-  dateOfBirth: '1985-03-15',
-  address: 'Carrer Principal, 123',
-  city: 'Barcelona',
-  zipCode: '08001',
+  fullName: '',
+  email: '',
+  phone: '',
+  dateOfBirth: '',
+  address: '',
+  city: '',
+  zipCode: '',
   photo: null,
-  emailNotifications: true,
+  emailNotifications: false,
   smsNotifications: false,
-  pushNotifications: true
+  pushNotifications: false
 });
 
-const requiredDocuments = ref([
-  {
-    id: 1,
-    name: 'Carnet de Conducció',
-    type: 'Permís de Conducció',
-    verified: true,
-    expired: false,
-    expiryDate: '2026-05-20',
-    uploadedDate: '2023-05-20'
-  },
-  {
-    id: 2,
-    name: 'DNI / Pasaport',
-    type: 'Document d\'Identitat',
-    verified: true,
-    expired: false,
-    expiryDate: '2028-08-15',
-    uploadedDate: '2023-06-10'
-  },
-  {
-    id: 3,
-    name: 'Inspecció Tècnica Vehicle',
-    type: 'Vehicle Check',
-    verified: true,
-    expired: false,
-    expiryDate: '2024-12-31',
-    uploadedDate: '2023-12-01'
-  },
-  {
-    id: 4,
-    name: 'Assegurança Vehicle',
-    type: 'Pòlissa d\'Assegurança',
-    verified: true,
-    expired: false,
-    expiryDate: '2024-11-15',
-    uploadedDate: '2023-11-01'
-  },
-  {
-    id: 5,
-    name: 'Antecedents Penals',
-    type: 'Certificat Criminal Record',
-    verified: true,
-    expired: false,
-    expiryDate: null,
-    uploadedDate: '2023-04-05'
-  }
-]);
-
-const paymentMethods = ref([
-  {
-    id: 1,
-    type: 'Targeta de Crèdit',
-    cardNumber: '**** **** **** 1234',
-    expiryDate: '05/26',
-    default: true
-  },
-  {
-    id: 2,
-    type: 'Targeta de Dèbit',
-    cardNumber: '**** **** **** 5678',
-    expiryDate: '08/25',
-    default: false
-  }
-]);
-
+const requiredDocuments = ref([]);
+const paymentMethods = ref([]);
 const statistics = ref({
-  totalTrips: 287,
-  averageRating: 4.8,
-  totalEarnings: 4250.75,
-  drivingHours: 342,
-  totalKm: 8450,
-  acceptanceRate: 92,
-  monthlyTrips: [
-    { month: 'Juny', trips: 35 },
-    { month: 'Juliol', trips: 42 },
-    { month: 'Agost', trips: 38 },
-    { month: 'Setembre', trips: 48 },
-    { month: 'Octubre', trips: 45 },
-    { month: 'Novembre', trips: 38 }
-  ]
+  totalTrips: 0,
+  averageRating: null,
+  totalEarnings: 0,
+  drivingHours: 0,
+  totalKm: 0,
+  acceptanceRate: null,
+  monthlyTrips: []
 });
 
 const formatDate = (dateString) => {
