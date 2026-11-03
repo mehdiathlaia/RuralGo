@@ -246,8 +246,8 @@ Confirmar i buscar conductor
         <svg class="success-icon" viewBox="0 0 24 24">
           <path :d="mdiCheckCircle" fill="currentColor" />
         </svg>
-        <p><strong>Conductor assignat!</strong></p>
-        <p>Ja pots consultar el trajecte en temps real.</p>
+        <p><strong>Sol·licitud enviada!</strong></p>
+        <p>La petició s'ha desat. Rebràs una actualització quan un conductor l'accepti.</p>
       </div>
     </div>
   </div>
@@ -256,8 +256,7 @@ Confirmar i buscar conductor
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useTripStore } from '../store/tripStore';
-import { matchingAlgorithm } from '../services/matchingAlgorithm';
+import { useTripStoreBackend } from '../store/tripStoreBackend';
 import { pathConditionService } from '../services/pathConditionService';
 import { googleMapsService } from '../services/googleMapsService';
 import {
@@ -274,7 +273,7 @@ import {
 } from '@mdi/js'
 
 const router = useRouter();
-const store = useTripStore();
+const store = useTripStoreBackend();
 
 const formState = ref('service-selection');
 const selectedService = ref(null);
@@ -358,6 +357,10 @@ const nextStep = () => {
     // Validate required fields
     if (!formData.value.tripDate || !formData.value.tripTime) {
       alert('Si us plau, selecciona la data i hora del viatge');
+      return;
+    }
+    if (!formData.value.pickup || !formData.value.pickupCoords) {
+      alert('Selecciona una adreça d’origen vàlida o utilitza la ubicació actual.');
       return;
     }
     if (!formData.value.destination || !formData.value.destinationCoords) {
@@ -473,7 +476,7 @@ const selectAddress = async (suggestion, isDestination = false) => {
     if (!geocoder) {
       console.warn('⚠️ Geocoder no disponible, usando fallback...');
       // Usar coordenadas de fallback
-      const fallbackCoords = { lat: 41.3851, lng: 2.1734 }; // Barcelona
+      const fallbackCoords = null; // No s'inventen coordenades si no es pot validar l'adreça.
       
       if (isDestination) {
         formData.value.destinationCoords = fallbackCoords;
@@ -504,7 +507,7 @@ const selectAddress = async (suggestion, isDestination = false) => {
       }
     } else {
       console.warn('⚠️ Geocoder no encontró resultados, usando fallback...');
-      const fallbackCoords = { lat: 41.3851, lng: 2.1734 };
+      const fallbackCoords = null; // No s'inventen coordenades si no es pot validar l'adreça.
       
       if (isDestination) {
         formData.value.destinationCoords = fallbackCoords;
@@ -517,7 +520,7 @@ const selectAddress = async (suggestion, isDestination = false) => {
     console.error('❌ Error geocodificant adreça:', error);
     console.warn('⚠️ Usando fallback por error...');
     
-    const fallbackCoords = { lat: 41.3851, lng: 2.1734 };
+    const fallbackCoords = null;
     if (isDestination) {
       formData.value.destinationCoords = fallbackCoords;
     } else {
@@ -603,15 +606,9 @@ const useCurrentLocationForPickup = async () => {
     console.warn('⚠️ Usando ubicación de fallback...');
     
     // Fallback completo - usar ubicación por defecto
-    formData.value.pickup = 'Ubicació per defecte (Barcelona)';
-    formData.value.pickupCoords = {
-      lat: 41.3851,
-      lng: 2.1734
-    };
-    formData.value.clientLocation = {
-      lat: 41.3851,
-      lng: 2.1734
-    };
+    formData.value.pickup = '';
+    formData.value.pickupCoords = null;
+    formData.value.clientLocation = null;
     
     console.log('✅ Utilizando ubicación de fallback:', formData.value.pickupCoords);
     
@@ -619,83 +616,59 @@ const useCurrentLocationForPickup = async () => {
     if (error.code === 1) {
       alert('Permisos denegados. Se usará una ubicación por defecto.');
     } else {
-      alert('No s\'ha pogut obtenir la teva ubicació. Se usará una ubicación por defecte.');
+      alert('No s’ha pogut obtenir la ubicació. Introdueix manualment l’adreça d’origen.');
     }
   } finally {
     isLoadingPickupLocation.value = false;
   }
 };
 
-// Enviar sol·licitud
+// Enviar la sol·licitud al backend: no s'assigna cap conductor fictici al navegador.
 const submitRequest = async () => {
+  if (assigningDriver.value) return;
   assigningDriver.value = true;
 
-  // Usar ubicació de suggerencia o ubicació per defecte
-  const clientLocationToUse = formData.value.pickupCoords || formData.value.clientLocation || { lat: 41.4, lng: 2.1 };
+  try {
+    const pickup = formData.value.pickupCoords;
+    const destination = formData.value.destinationCoords;
+    if (!pickup || !destination) {
+      throw new Error('Cal validar les adreces d’origen i destinació abans d’enviar la sol·licitud.');
+    }
 
-  // Obtenir l'usuari actual
-  const { useAuthStore } = await import('../store/authStore');
-  const { useNotificationStore } = await import('../store/notificationStore');
-  const authStore = useAuthStore();
-  const notificationStore = useNotificationStore();
-  
-  const currentUser = authStore.currentUser;
-  const clientId = currentUser?.id || 1; // Default a client 1
+    const notes = [
+      `Data: ${formData.value.tripDate}`,
+      `Hora: ${formData.value.tripTime}`,
+      `Persones: ${formData.value.numberOfAssistants}`,
+      `Estat de la carretera: ${formData.value.pathCondition}`
+    ].join(' · ');
 
-  // 1. Crear trajecte en el tripStore (emmagatzemat a l'aplicació)
-  store.createTrip({
-    clientName: currentUser?.name || 'Client',
-    pickup: formData.value.pickup,
-    pickupNumber: formData.value.pickupNumber || '---',
-    destination: formData.value.destination,
-    destinationNumber: formData.value.destinationNumber || '---',
-    service: selectedService.value,
-    assistants: formData.value.numberOfAssistants,
-    mode: 'planificat',
-    pathCondition: formData.value.pathCondition,
-    tripDate: formData.value.tripDate,
-    tripTime: formData.value.tripTime,
-    clientLocation: clientLocationToUse,
-    pickupCoords: formData.value.pickupCoords,
-    destinationCoords: formData.value.destinationCoords
-  });
+    await store.createTrip({
+      pickupLocation: {
+        address: formData.value.pickup,
+        latitude: pickup.lat,
+        longitude: pickup.lng
+      },
+      dropoffLocation: {
+        address: formData.value.destination,
+        latitude: destination.lat,
+        longitude: destination.lng
+      },
+      serviceType: selectedService.value,
+      notes
+    });
 
-  // Obtenir l'ID del viatge que s'acaba de crear
-  const tripStoreId = store.trip?.id;
-
-  // 2. Crear trajecte en el notificationStore per notificacions
-  const trip = notificationStore.createNewTrip({
-    clientName: currentUser?.name || 'Client',
-    service: selectedService.value,
-    pickup: formData.value.pickup,
-    pickupNumber: formData.value.pickupNumber || '---',
-    destination: formData.value.destination,
-    destinationNumber: formData.value.destinationNumber || '---',
-    assistants: formData.value.numberOfAssistants,
-    mode: 'planificat',
-    pathCondition: formData.value.pathCondition,
-    tripDate: formData.value.tripDate,
-    tripTime: formData.value.tripTime,
-    clientLocation: clientLocationToUse,
-    pickupCoords: formData.value.pickupCoords,
-    destinationCoords: formData.value.destinationCoords,
-    clientId: clientId,
-    tripStoreId: tripStoreId
-  }, clientId);
-
-  // 3. Mostrar notificació al client
-  notificationStore.showToast(
-    `✓ Viatge sol·licitat! Els conductors estan rebent la teva petició...`,
-    'success',
-    3000
-  );
-
-  assigningDriver.value = false;
-
-  // 4. Navegar a MyTrips
-  setTimeout(() => {
-    router.push('/my-trips');
-  }, 500);
+    driverAssigned.value = true;
+    store.getActiveTrips().catch(() => {});
+    setTimeout(() => router.push('/my-trips'), 900);
+  } catch (error) {
+    const { useNotificationStore } = await import('../store/notificationStore');
+    useNotificationStore().showToast(
+      error?.message || 'No s’ha pogut enviar la sol·licitud. Torna-ho a provar.',
+      'error'
+    );
+  } finally {
+    assigningDriver.value = false;
+  }
 };
 
 onMounted(async () => {
