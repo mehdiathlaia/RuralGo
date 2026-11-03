@@ -87,3 +87,16 @@ Els canvis es desen a la branca principal i els desplegaments automàtics depene
 - Les pantalles `MyTrips`, `DriverDashboard` i `History` encara contenen dependències del store local antic i notificacions simulades. Cal migrar-les a l'API abans de considerar complet el cicle de viatge.
 - Les dades de pagament, targetes, descomptes i estadístiques del conductor encara inclouen valors de demostració. No s'ha de processar cap cobrament real ni presentar aquestes xifres com a dades reals.
 - Cal provar una sol·licitud amb comptes reals de passatger i conductor, verificar-ne la recepció al backend i completar acceptació, inici, cancel·lació i finalització.
+
+
+### Pantalla «Els meus viatges» connectada a l'API (03/11/2026)
+- La pantalla carrega els viatges actius i l'historial des de les rutes autenticades del backend.
+- Les dades del model MongoDB (identificador, adreces, coordenades, conductor i estat) es transformen al format de la interfície.
+- La cancel·lació s'envia a `PUT /api/trips/:tripId/cancel` i després es tornen a carregar les dades.
+- S'han incorporat estats de càrrega, errors i reintent. Els estats reals «requested», «accepted» i «started» es mostren a la interfície.
+- S'ha amagat la interfície de valoració del passatger perquè el backend encara no disposa d'un endpoint específic per enviar-la.
+- El tipus «compres» es converteix en el valor admès «comunitaris» del model backend.
+
+### Verificació pendent
+- GitHub Actions ha completat correctament la compilació i el desplegament de GitHub Pages per al commit `81af519`. Els commits posteriors s'han de verificar també.
+- No s'ha confirmat encara un desplegament de Vercel/Render ni una prova integral amb dos comptes reals.
