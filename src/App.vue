@@ -17,7 +17,7 @@
             <svg class="logo-icon" viewBox="0 0 24 24">
               <path :d="mdiEarth" fill="currentColor" />
             </svg>
-            RURAL-GO VIVA
+            RURALGO
           </router-link>
         </div>
 
@@ -42,7 +42,8 @@
         </div>
       </header>
 
-      <main class="main-content">
+      <a class="skip-link" href="#main-content">Ves al contingut</a>
+      <main id="main-content" class="main-content" tabindex="-1">
         <router-view />
       </main>
 
@@ -64,17 +65,6 @@ import NotificationCenter from './components/NotificationCenter.vue';
 import Footer from './components/Footer.vue';
 import HamburgerMenu from './components/HamburgerMenu.vue';
 import {
-  mdiTarget,
-  mdiPhone,
-  mdiListBox,
-  mdiCar,
-  mdiAlert,
-  mdiClockOutline,
-  mdiStar,
-  mdiTheater,
-  mdiCog,
-  mdiLogout,
-  mdiLock,
   mdiEarth,
   mdiAccount
 } from '@mdi/js';
@@ -107,6 +97,9 @@ const logout = () => {
 </script>
 
 <style scoped>
+.skip-link { position: absolute; top: -48px; left: 12px; z-index: 10000; padding: 10px 14px; border-radius: 8px; background: #18332d; color: #fff; }
+.skip-link:focus { top: 12px; }
+
 .layout {
   min-height: 100vh;
   display: flex;
