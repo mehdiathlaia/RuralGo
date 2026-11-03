@@ -74,3 +74,16 @@ Els canvis es desen a la branca principal i els desplegaments automàtics depene
 - La compilació de Vite de GitHub Actions ha finalitzat correctament en l'execució revisada.
 - La publicació a GitHub Pages fallava perquè `GITHUB_TOKEN` no tenia permís d'escriptura (`403`). S'ha afegit `permissions: contents: write` i s'han actualitzat les accions a versions més recents.
 - Cal confirmar el resultat de la nova execució després d'aquest canvi.
+
+
+### Sol·licituds de viatge connectades al backend (03/11/2026)
+- El formulari de nova sol·licitud envia les dades a `POST /api/trips` mitjançant el store de backend, en lloc de crear viatges ficticis només al navegador.
+- S'envien adreces i coordenades reals validades, el tipus de servei i les dades de planificació com a notes.
+- S'ha eliminat l'ús de coordenades de Barcelona com a substitut silenciós quan falla la geocodificació. Si no es poden validar les adreces, la sol·licitud no s'envia.
+- El servei HTTP reutilitza el token de sessió `ruralgoUserToken` de l'autenticació principal, a més de mantenir compatibilitat amb `authToken`.
+- La confirmació indica que la sol·licitud s'ha enviat; no afirma que ja hi hagi un conductor assignat.
+
+### Pendents de la integració de viatges
+- Les pantalles `MyTrips`, `DriverDashboard` i `History` encara contenen dependències del store local antic i notificacions simulades. Cal migrar-les a l'API abans de considerar complet el cicle de viatge.
+- Les dades de pagament, targetes, descomptes i estadístiques del conductor encara inclouen valors de demostració. No s'ha de processar cap cobrament real ni presentar aquestes xifres com a dades reals.
+- Cal provar una sol·licitud amb comptes reals de passatger i conductor, verificar-ne la recepció al backend i completar acceptació, inici, cancel·lació i finalització.
