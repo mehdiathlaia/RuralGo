@@ -397,7 +397,26 @@ const selectedTrip = ref(null);
 const driverId = computed(() => authStore.currentUser?.id || null);
 // Obtenir el viatge actual (acceptat per aquest conductor)
 const currentTrip = computed(() => {
-  return store.activeTrips.find(trip => ['accepted', 'started'].includes(trip.status)) || null;
+  const trip = store.activeTrips.find(item => ['accepted', 'started'].includes(item.status));
+  if (!trip) return null;
+  return {
+    ...trip,
+    id: trip._id,
+    service: trip.serviceType,
+    clientName: trip.passengerId?.name || 'Passatger',
+    pickup: trip.pickupLocation?.address || 'Origen no indicat',
+    pickupNumber: '',
+    destination: trip.dropoffLocation?.address || 'Destinació no indicada',
+    destinationNumber: '',
+    numberOfAssistants: trip.passengerCount || 1,
+    vehicleType: trip.vehicleType || 'normal',
+    pathCondition: trip.pathCondition || 'rural',
+    status: trip.status === 'accepted' ? 'driver-assigned' : 'in-progress',
+    clientLocation: trip.pickupLocation?.latitude != null && trip.pickupLocation?.longitude != null
+      ? { lat: Number(trip.pickupLocation.latitude), lng: Number(trip.pickupLocation.longitude) } : null,
+    destinationCoords: trip.dropoffLocation?.latitude != null && trip.dropoffLocation?.longitude != null
+      ? { lat: Number(trip.dropoffLocation.latitude), lng: Number(trip.dropoffLocation.longitude) } : null
+  };
 });
 
 let map1 = null;
@@ -492,7 +511,7 @@ const getStatusIcon = (status) => {
 };
 
 const calculateDistance = trip => Number(trip.estimatedDistance || 0).toFixed(1);
-const toggleOnlineStatus = () => { isOnline.value = !isOnline.value; };
+const toggleOnlineStatus = () => { alert('La disponibilitat del conductor encara no es desa al servidor. Aquesta opció només canvia la visualització local.'); };
 const acceptTrip = async tripId => {
   try {
     await store.acceptTrip(tripId);
@@ -539,16 +558,19 @@ const viewTripDetails = (trip) => {
 const openGoogleMapsRoute = (routeType) => {
   if (!selectedTrip.value) return;
 
-  const driverLocation = { lat: 41.3, lng: 2.0 };
-  const pickupLocation = selectedTrip.value.clientLocation || { lat: 41.4, lng: 2.1 };
-  const destinationLocation = selectedTrip.value.destinationCoords || { lat: 41.45, lng: 2.15 };
+  const pickupLocation = selectedTrip.value.clientLocation;
+  const destinationLocation = selectedTrip.value.destinationCoords;
+  if (routeType === 'driver-to-client') {
+    if (!pickupLocation) { alert('La ubicació de recollida no té coordenades vàlides.'); return; }
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${pickupLocation.lat},${pickupLocation.lng}&travelmode=driving`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    return;
+  }
+  if (!pickupLocation || !destinationLocation) { alert('Aquest viatge no té coordenades vàlides per mostrar la ruta.'); return; }
 
   let origin, destination;
 
-  if (routeType === 'driver-to-client') {
-    origin = `${driverLocation.lat},${driverLocation.lng}`;
-    destination = `${pickupLocation.lat},${pickupLocation.lng}`;
-  } else if (routeType === 'client-to-destination') {
+  if (routeType === 'client-to-destination') {
     origin = `${pickupLocation.lat},${pickupLocation.lng}`;
     destination = `${destinationLocation.lat},${destinationLocation.lng}`;
   }
@@ -571,16 +593,10 @@ const initializeMaps = async () => {
 
     await nextTick();
 
-    // Ubicacions reals del viatge
-    const driverLocation = { lat: 41.3, lng: 2.0 };
-    const pickupLocation = selectedTrip.value.clientLocation || { lat: 41.4, lng: 2.1 };
-    const destinationLocation = selectedTrip.value.destinationCoords || { lat: 41.45, lng: 2.15 };
-
-    // Mapa 1: Conductor a Client
-    initializeDriverToClientMap(driverLocation, pickupLocation);
-    
-    // Mapa 2: Client a Destí
-    initializeClientToDestinationMap(pickupLocation, destinationLocation);
+    const pickupLocation = selectedTrip.value.clientLocation;
+    const destinationLocation = selectedTrip.value.destinationCoords;
+    if (pickupLocation) initializeDriverToClientMap(pickupLocation, pickupLocation);
+    if (pickupLocation && destinationLocation) initializeClientToDestinationMap(pickupLocation, destinationLocation);
   } catch (error) {
     console.error('Error carregant mapes:', error);
   }
@@ -591,7 +607,6 @@ const initializeDriverToClientMap = (driverLocation, pickupLocation) => {
   if (!container) return;
 
   const bounds = new window.google.maps.LatLngBounds();
-  bounds.extend(driverLocation);
   bounds.extend(pickupLocation);
 
   map1 = new window.google.maps.Map(container, {
@@ -601,14 +616,7 @@ const initializeDriverToClientMap = (driverLocation, pickupLocation) => {
 
   map1.fitBounds(bounds);
 
-  // Marcadors
-  new window.google.maps.Marker({
-    position: driverLocation,
-    map: map1,
-    title: 'Tu (Conductor)',
-    icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-  });
-
+  // Només es mostra la recollida; no disposem de GPS del conductor.
   new window.google.maps.Marker({
     position: pickupLocation,
     map: map1,
@@ -616,26 +624,7 @@ const initializeDriverToClientMap = (driverLocation, pickupLocation) => {
     icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
   });
 
-  // Ruta
-  const directionsService = new window.google.maps.DirectionsService();
-  const directionsRenderer = new window.google.maps.DirectionsRenderer({
-    map: map1,
-    polylineOptions: {
-      strokeColor: '#FF7300',
-      strokeOpacity: 0.8,
-      strokeWeight: 4
-    }
-  });
-
-  directionsService.route({
-    origin: driverLocation,
-    destination: pickupLocation,
-    travelMode: window.google.maps.TravelMode.DRIVING
-  }).then(result => {
-    directionsRenderer.setDirections(result);
-  }).catch(error => {
-    console.warn('Error en ruta 1:', error);
-  });
+  // No es possible calcular la ruta del conductor sense la seva ubicació GPS.
 };
 
 const initializeClientToDestinationMap = (pickupLocation, destinationLocation) => {
