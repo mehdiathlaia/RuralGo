@@ -156,7 +156,7 @@ export const backendService = {
     if (!socket) {
       socket = io(SOCKET_URL, {
         auth: {
-          token: localStorage.getItem('authToken')
+          token: localStorage.getItem('ruralgoUserToken') || localStorage.getItem('authToken')
         }
       });
 
