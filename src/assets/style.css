@@ -1,22 +1,22 @@
 /* RURAL-GO VIVA - Estils globals */
 
 :root {
-  --primary-color: #2E7D6E;
-  --primary-light: #4ECDC4;
-  --primary-dark: #1a4a42;
+  --primary-color: #267563;
+  --primary-light: #72b9a5;
+  --primary-dark: #1c5c4e;
   --secondary-color: #E74C3C;
   --success-color: #27ae60;
   --success-light: #2ecc71;
   --warning-color: #f39c12;
   --danger-color: #e74c3c;
-  --dark-color: #1a1a1a;
-  --dark-light: #2c3e50;
-  --light-color: #f8f9fa;
+  --dark-color: #18332d;
+  --dark-light: #35534a;
+  --light-color: #f5f8f6;
   --gray-100: #f7f7f7;
   --gray-200: #e9ecef;
   --gray-300: #dee2e6;
   --gray-500: #9ca3af;
-  --border-color: #e9ecef;
+  --border-color: #dfe9e3;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
@@ -36,7 +36,7 @@ html {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
-  background: #ffffff;
+  background: #f5f8f6;
   color: var(--dark-color);
   line-height: 1.6;
   min-height: 100vh;
@@ -609,4 +609,36 @@ input:hover, textarea:hover, select:hover {
     transition-duration: .01ms !important;
     animation-duration: .01ms !important;
   }
+}
+
+
+/* RuralGo visual system refinement */
+:root {
+  --shadow-sm: 0 2px 8px rgba(24, 51, 45, .05);
+  --shadow-md: 0 8px 24px rgba(24, 51, 45, .09);
+  --shadow-lg: 0 16px 40px rgba(24, 51, 45, .13);
+}
+
+body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+.card, .feature-card, .auth-card, .stat-card, .dashboard-card {
+  border-color: #e2ebe5;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(24, 51, 45, .06);
+}
+
+.btn { border-radius: 10px; font-weight: 650; letter-spacing: .005em; }
+.btn-primary { background: var(--primary-color); }
+.btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+
+input, textarea, select {
+  border-color: #dce7e1;
+  border-radius: 10px;
+  color: var(--dark-color);
+}
+
+input::placeholder, textarea::placeholder { color: #82928b; }
+
+@media (max-width: 480px) {
+  .btn { width: auto; }
 }
