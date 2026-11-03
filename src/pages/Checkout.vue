@@ -7,6 +7,10 @@
     </div>
 
     <div class="checkout-content">
+      <div role="alert" class="payment-unavailable-notice">
+        <strong>Pagaments no disponibles encara.</strong>
+        Aquest resum conté dades d’exemple. No s’efectuarà cap cobrament ni reserva des d’aquesta pantalla.
+      </div>
       <!-- Steps Progress -->
       <div class="steps">
         <div class="step" :class="{ active: currentStep === 1, completed: currentStep > 1 }">
@@ -82,7 +86,7 @@
         </div>
 
         <div class="step-actions">
-          <button @click="currentStep = 2" class="btn btn-primary">Continua → Pagament</button>
+          <button class="btn btn-primary" disabled>Pagament no disponible</button>
         </div>
       </div>
 
@@ -155,7 +159,7 @@
 
         <div class="step-actions">
           <button @click="currentStep = 2" class="btn btn-secondary">← Enrere</button>
-          <button @click="processPayment" class="btn btn-success" :disabled="!acceptTerms">
+          <button @click="processPayment" class="btn btn-success" disabled>
             <svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheckCircle" fill="currentColor" /></svg> Confirma (€10.42)
           </button>
         </div>
@@ -688,4 +692,6 @@ const goToDashboard = () => router.push('/client-dashboard');
     width: 100%;
   }
 }
+.payment-unavailable-notice { margin-bottom: 24px; padding: 14px 16px; border: 1px solid #e0a23b; border-radius: 8px; background: #fff8e8; color: #694b12; line-height: 1.5; }
+.payment-unavailable-notice strong { display: block; margin-bottom: 4px; }
 </style>
