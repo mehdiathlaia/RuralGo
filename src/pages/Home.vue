@@ -4,8 +4,8 @@
     <section class="hero">
       <div class="hero-content">
         <div class="hero-text">
-          <h1 class="hero-title">RURAL-GO VIVA</h1>
-          <p class="hero-subtitle">Mobilitat sostenible per a zones rurals</p>
+          <h1 class="hero-title">RURALGO</h1>
+          <p class="hero-subtitle">Mobilitat propera per a les comunitats rurals</p>
           <p class="hero-description">
             Connectem les comunitats rurals amb transport accessible, segur i de confiança
           </p>
@@ -36,7 +36,7 @@
     <!-- Features Section -->
     <section class="features" id="services">
       <div class="container">
-        <h2 class="section-title">Garantim</h2>
+        <h2 class="section-title">Una mobilitat rural més accessible</h2>
         <div class="features-grid">
           <div class="feature-card">
             <div class="feature-icon" style="background: #FF6B6B;">
@@ -45,7 +45,7 @@
               </svg>
             </div>
             <h3>Transport accessible</h3>
-            <p>Vehicles adaptats per a persones amb mobilitat reduïda</p>
+            <p>Informació del servei i opcions disponibles a la teva zona</p>
           </div>
 
           <div class="feature-card">
@@ -54,8 +54,8 @@
                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
               </svg>
             </div>
-            <h3>Conductors verificats</h3>
-            <p>Professionals capacitats i amb seguretat certificada</p>
+            <h3>Gestió de conductors</h3>
+            <p>Un espai per gestionar les sol·licituds i els viatges</p>
           </div>
 
           <div class="feature-card">
@@ -64,8 +64,8 @@
                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
               </svg>
             </div>
-            <h3>Disponible 24/7</h3>
-            <p>Suport constant per a les teves necessitats de mobilitat</p>
+            <h3>Sol·licituds digitals</h3>
+            <p>Consulta i gestiona les teves necessitats de mobilitat</p>
           </div>
 
           <div class="feature-card">
@@ -74,8 +74,8 @@
                 <path fill="currentColor" d="M12 1C5.9 1 1 5.9 1 12s4.9 11 11 11 11-4.9 11-11S18.1 1 12 1m0 20c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9m3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
               </svg>
             </div>
-            <h3>Preus justos</h3>
-            <p>Tarifes transparents i sense sorpreses</p>
+            <h3>Informació transparent</h3>
+            <p>Consulta les condicions disponibles abans de sol·licitar un servei</p>
           </div>
 
           <div class="feature-card">
@@ -85,7 +85,7 @@
               </svg>
             </div>
             <h3>Seguretat</h3>
-            <p>Serveis assegurats i protocols de seguretat</p>
+            <p>Eines per consultar l'estat del viatge i les seves dades</p>
           </div>
 
           <div class="feature-card">
@@ -95,7 +95,7 @@
               </svg>
             </div>
             <h3>Comunitat local</h3>
-            <p>Suport directe a les zones rurals de Catalunya</p>
+            <p>Una eina pensada per a les necessitats dels entorns rurals</p>
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@
     <section class="cta">
       <div class="container cta-content">
         <h2>Comença ara</h2>
-        <p>Uneix-te a milers de persones que confien en RURAL-GO VIVA</p>
+        <p>Descobreix les eines de mobilitat de RuralGo</p>
         <button @click="router.push('/login')" class="btn btn-primary btn-lg">
           Accedir a l'aplicació
         </button>
