@@ -72,43 +72,7 @@
             <input v-model="profileData.phone" type="tel" placeholder="622 445 556">
           </div>
 
-          <div class="form-group">
-            <label>Data de naixement</label>
-            <input v-model="profileData.dateOfBirth" type="date">
-          </div>
-
-          <div class="form-group">
-            <label>Adreça</label>
-            <input v-model="profileData.address" type="text" placeholder="Carrer Principal, 123">
-          </div>
-
-          <div class="form-group">
-            <label>Ciutat</label>
-            <input v-model="profileData.city" type="text" placeholder="Barcelona">
-          </div>
-
-          <div class="form-group">
-            <label>Codi Postal</label>
-            <input v-model="profileData.zipCode" type="text" placeholder="08001">
-          </div>
-
-          <div class="form-group">
-            <label>Preferències de Notificacions</label>
-            <div class="checkbox-group">
-              <label>
-                <input v-model="profileData.emailNotifications" type="checkbox">
-                Notificacions per Correu electrònic
-              </label>
-              <label>
-                <input v-model="profileData.smsNotifications" type="checkbox">
-                Notificacions per SMS
-              </label>
-              <label>
-                <input v-model="profileData.pushNotifications" type="checkbox">
-                Notificacions Push
-              </label>
-            </div>
-          </div>
+          <p class="profile-note">Actualment es poden editar el nom i el telèfon. La resta de dades i preferències encara no es desen al servidor.</p>
 
           <button type="submit" class="btn btn-primary" :disabled="isSaving"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> {{ isSaving ? 'Desant…' : 'Desa els canvis' }}</button>
         </form>
@@ -118,7 +82,7 @@
       <div v-if="activeTab === 'documents'" class="tab-content">
         <h2>Documents de verificació</h2>
 
-        <div class="documents-grid">
+        <p v-if="requiredDocuments.length === 0" class="profile-note">La gestió de documents encara no està connectada.</p>\n        <div class="documents-grid">
           <div 
             v-for="doc in requiredDocuments" 
             :key="doc.id" 
@@ -155,7 +119,7 @@
       <div v-if="activeTab === 'payments'" class="tab-content">
         <h2>Mètodes de pagament</h2>
 
-        <div class="payment-methods">
+        <p v-if="paymentMethods.length === 0" class="profile-note">Encara no hi ha cap mètode de pagament desat. La gestió de pagaments no està disponible.</p>\n        <div class="payment-methods">
           <div v-for="method in paymentMethods" :key="method.id" class="payment-card">
             <div class="payment-header">
               <h3>{{ method.type }}</h3>
@@ -873,4 +837,5 @@ const addPaymentMethod = () => {
   }
 }
 .profile-error { margin: 0 0 16px; padding: 12px 14px; border-radius: 10px; color: #8a2525; background: #fff0f0; }
+.profile-note { padding: 14px 16px; border-radius: 12px; background: #edf4f0; color: #52675f; line-height: 1.55; }
 </style>
