@@ -216,10 +216,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useTripStore } from '../store/tripStore'
+import { useTripStoreBackend } from '../store/tripStoreBackend'
 import { mdiStar, mdiMapMarker, mdiTarget, mdiRuler, mdiCar, mdiAlert, mdiCheck, mdiEmoticonSadOutline } from '@mdi/js'
 
-const tripStore = useTripStore()
+const tripStore = useTripStoreBackend()
 const selectedTrip = ref(null)
 const filterStartDate = ref('')
 const filterEndDate = ref('')
@@ -227,13 +227,35 @@ const filterService = ref('')
 const displayedTrips = ref([])
 
 // Get statistics
+const historyTrips = computed(() => tripStore.tripHistory.map(trip => ({
+  ...trip,
+  id: trip._id,
+  service: trip.serviceType,
+  pickup: trip.pickupLocation?.address || 'Origen no indicat',
+  destination: trip.dropoffLocation?.address || 'Destinació no indicada',
+  driver: trip.driverId || null,
+  totalKm: Number(trip.actualDistance ?? trip.estimatedDistance ?? 0),
+  rating: Number(trip.rating?.passenger ?? 0),
+  finalState: trip.status === 'completed' ? 'ok' : 'incidence'
+})))
 const statistics = computed(() => {
-  return tripStore.getStatistics();
+  const completed = historyTrips.value.filter(trip => trip.status === 'completed')
+  const ratings = completed.map(trip => trip.rating).filter(value => value > 0)
+  const now = new Date()
+  return {
+    totalTrips: historyTrips.value.length,
+    averageRating: ratings.length ? (ratings.reduce((sum, value) => sum + value, 0) / ratings.length).toFixed(1) : '—',
+    totalKm: completed.reduce((sum, trip) => sum + trip.totalKm, 0).toFixed(1),
+    tripsThisMonth: historyTrips.value.filter(trip => {
+      const date = new Date(trip.createdAt)
+      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()
+    }).length
+  }
 })
 
 // Filtered trips
 const filteredTrips = computed(() => {
-  let filtered = displayedTrips.value;
+  let filtered = displayedTrips.value;\n\n  if (filterStartDate.value) {\n    const start = new Date(`${filterStartDate.value}T00:00:00`);\n    filtered = filtered.filter(t => new Date(t.createdAt) >= start);\n  }\n  if (filterEndDate.value) {\n    const end = new Date(`${filterEndDate.value}T23:59:59.999`);\n    filtered = filtered.filter(t => new Date(t.createdAt) <= end);\n  }
 
   if (filterService.value) {
     filtered = filtered.filter(t => t.service === filterService.value);
@@ -285,7 +307,7 @@ const getVehicleType = (type) => {
 }
 
 const applyFilters = () => {
-  let filtered = tripStore.getTripsHistory();
+  let filtered = historyTrips.value;
 
   if (filterStartDate.value && filterEndDate.value) {
     const start = new Date(filterStartDate.value);
@@ -304,15 +326,21 @@ const clearFilters = () => {
   filterStartDate.value = '';
   filterEndDate.value = '';
   filterService.value = '';
-  displayedTrips.value = tripStore.getTripsHistory();
+  displayedTrips.value = historyTrips.value;
 }
 
 const viewDetails = (trip) => {
   selectedTrip.value = trip;
 }
 
-onMounted(() => {
-  displayedTrips.value = tripStore.getTripsHistory();
+onMounted(async () => {
+  try {
+    await tripStore.getTripHistory();
+    displayedTrips.value = historyTrips.value;
+  } catch (error) {
+    console.error('No s’ha pogut carregar l’historial:', error);
+    displayedTrips.value = [];
+  }
 })
 </script>
 
