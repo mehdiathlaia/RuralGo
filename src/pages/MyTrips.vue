@@ -5,6 +5,8 @@
       <p>Viatges programats i historial</p>
     </div>
 
+    <div v-if="loadError" class="no-trips"><p>{{ loadError }}</p><button class="btn btn-primary" @click="loadTrips">Torna-ho a provar</button></div>
+    <div v-else-if="tripStore.loading && allTrips.length === 0" class="no-trips"><p>Carregant els teus viatges…</p></div>
     <div class="trips-container">
       <!-- Viatges programats -->
       <div class="trips-section">
@@ -32,7 +34,7 @@
                 </p>
               </div>
               <div class="trip-status">
-                <span class="status-badge status-planned">Programat</span>
+                <span class="status-badge status-planned">{{ trip.status === 'requested' ? 'Pendent de conductor' : trip.status === 'accepted' ? 'Acceptat' : 'En curs' }}</span>
               </div>
             </div>
             
@@ -204,7 +206,7 @@
             </div>
           </div>
 
-          <div v-if="selectedTrip.status === 'completed' && !selectedTrip.rating" class="detail-section">
+          <div v-if="false" class="detail-section">
             <h3>Valora el viatge</h3>
             <div class="rating-stars">
               <button 
@@ -238,26 +240,17 @@
 
 <script setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { useTripStore } from '../store/tripStore';
+import { useTripStoreBackend } from '../store/tripStoreBackend';
 import { googleMapsService } from '../services/googleMapsService';
-import {
-  mdiListBox,
-  mdiMapMarker,
-  mdiCar,
-  mdiStar,
-  mdiMap,
-  mdiCheck,
-  mdiAlert,
-  mdiClose,
-  mdiRoadVariant
-} from '@mdi/js'
+import { mdiListBox, mdiMapMarker, mdiCar, mdiStar, mdiMap, mdiCheck, mdiAlert, mdiClose, mdiRoadVariant } from '@mdi/js';
 
-const tripStore = useTripStore();
+const tripStore = useTripStoreBackend();
 const selectedTrip = ref(null);
 const hoverRating = ref(0);
+const loadError = ref('');
+const isCancelling = ref(false);
 let map = null;
 
-// Path condition options
 const pathConditions = [
   { value: 'good', name: 'Ben pavimentada', icon: mdiCheck },
   { value: 'medium', name: 'Estat normal', icon: mdiAlert },
@@ -265,241 +258,136 @@ const pathConditions = [
   { value: 'rural', name: 'Via rural', icon: mdiRoadVariant }
 ];
 
-// Get computed lists
-const plannedTrips = computed(() => {
-  return tripStore.trips.filter(t => t.status === 'planned' || t.status === 'assigned');
+const normalizeTrip = (trip) => ({
+  ...trip,
+  id: trip._id,
+  service: trip.serviceType,
+  pickup: trip.pickupLocation?.address || '—',
+  destination: trip.dropoffLocation?.address || '—',
+  pickupCoords: trip.pickupLocation ? { lat: trip.pickupLocation.latitude, lng: trip.pickupLocation.longitude } : null,
+  destinationCoords: trip.dropoffLocation ? { lat: trip.dropoffLocation.latitude, lng: trip.dropoffLocation.longitude } : null,
+  tripDate: trip.createdAt,
+  tripTime: trip.createdAt ? new Date(trip.createdAt).toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' }) : '',
+  completedAt: trip.completedAt,
+  driverName: trip.driverId?.name || '',
+  driverPhone: trip.driverId?.phone || '',
+  driverRating: trip.driverId?.rating || null,
+  driverAssigned: Boolean(trip.driverId),
+  vehicleInfo: '',
+  rating: trip.rating?.passenger || null,
+  pathCondition: null,
+  assistants: 1,
+  status: trip.status
 });
 
-const completedTrips = computed(() => {
-  return tripStore.trips.filter(t => t.status === 'completed');
-});
+const allTrips = computed(() => [
+  ...tripStore.activeTrips,
+  ...tripStore.tripHistory.filter(historyTrip => !tripStore.activeTrips.some(active => active._id === historyTrip._id))
+].map(normalizeTrip));
 
-// Utility functions
-const getServiceName = (serviceId) => {
-  const service = tripStore.serviceOptions.find(s => s.id === serviceId);
-  return service?.name || serviceId;
+const plannedTrips = computed(() => allTrips.value.filter(trip => ['requested', 'accepted', 'started'].includes(trip.status)));
+const completedTrips = computed(() => allTrips.value.filter(trip => trip.status === 'completed'));
+
+const serviceNames = {
+  transport: 'Transport rural',
+  cultura: 'RURAL-GO Cultura',
+  familia: 'RURAL-GO Família',
+  salut: 'RURAL-GO Salut',
+  comunitaris: 'Serveis comunitaris',
+  natura: 'RURAL-GO Natura',
+  urgencia: 'Emergència'
 };
+const getServiceName = serviceId => serviceNames[serviceId] || serviceId || 'Servei';
+const getPathConditionName = value => pathConditions.find(path => path.value === value)?.name || 'No especificat';
+const getPathClass = value => value === 'rural' ? 'path-rural' : 'path-urban';
+const formatDate = value => value ? new Date(value).toLocaleDateString('ca-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : '';
 
-const getVehicleName = (vehicleId) => {
-  const vehicle = tripStore.vehicleTypes.find(v => v.id === vehicleId);
-  return vehicle?.name || vehicleId;
-};
+const viewTripDetails = trip => { selectedTrip.value = trip; };
 
-const getPathConditionName = (pathValue) => {
-  const condition = pathConditions.find(p => p.value === pathValue);
-  return condition?.name || pathValue;
-};
-
-const getPathClass = (pathValue) => {
-  return pathValue === 'rural' ? 'path-rural' : 'path-urban';
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('ca-ES', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  });
-};
-
-// Actions
-const viewTripDetails = (trip) => {
-  selectedTrip.value = trip;
-};
-
-const cancelTrip = async (tripId) => {
-  if (confirm('Estàs segur que vols cancelar aquest viatge?')) {
-    const { useNotificationStore } = await import('../store/notificationStore');
-    const notificationStore = useNotificationStore();
-    
-    try {
-      // El tripId que viene de trip.id es el tripStoreId (son lo mismo)
-      console.log('🔍 MyTrips cancelTrip - tripId/tripStoreId:', tripId);
-      
-      // Cancelar al tripStore y obtener información del driver
-      const tripStoreResult = tripStore.cancelTrip(tripId);
-      console.log('📋 tripStore.cancelTrip result:', tripStoreResult);
-      
-      // Cancelar al notificationStore con la información del driver
-      const result = notificationStore.cancelTrip(tripId, tripStoreResult?.driverId);
-      
-      if (result && result.success) {
-        if (result.wasAccepted) {
-          notificationStore.showToast('Viatge cancel·lat. El conductor ha rebut la notificació.', 'success');
-        } else {
-          notificationStore.showToast('Viatge cancel·lat correctament.', 'success');
-        }
-        selectedTrip.value = null;
-      } else {
-        notificationStore.showToast('Error al cancelar el viatge.', 'error');
-      }
-    } catch (error) {
-      console.error('❌ Error cancelant viatge:', error);
-      notificationStore.showToast('Error al cancelar el viatge.', 'error');
-    }
+const loadTrips = async () => {
+  loadError.value = '';
+  try {
+    await Promise.all([tripStore.getActiveTrips(), tripStore.getTripHistory()]);
+    if (selectedTrip.value) selectedTrip.value = allTrips.value.find(trip => trip.id === selectedTrip.value.id) || null;
+  } catch (error) {
+    loadError.value = error?.message || 'No s’han pogut carregar els viatges.';
   }
 };
 
-const rateTrip = (rating) => {
-  if (selectedTrip.value) {
-    selectedTrip.value.tempRating = rating;
+const cancelTrip = async tripId => {
+  if (isCancelling.value || !confirm('Estàs segur que vols cancel·lar aquest viatge?')) return;
+  isCancelling.value = true;
+  try {
+    await tripStore.cancelTrip(tripId);
+    selectedTrip.value = null;
+    await loadTrips();
+  } catch (error) {
+    alert(error?.message || 'No s’ha pogut cancel·lar el viatge.');
+  } finally {
+    isCancelling.value = false;
   }
 };
 
+const rateTrip = rating => { hoverRating.value = rating; };
 const submitRating = () => {
-  if (selectedTrip.value && selectedTrip.value.tempRating) {
-    tripStore.rateTrip(selectedTrip.value.id, selectedTrip.value.tempRating);
-    selectedTrip.value.rating = selectedTrip.value.tempRating;
-    alert('Gràcies per la teva valoració!');
-  }
+  alert('La valoració des del perfil de passatger encara no està disponible.');
 };
 
-// Calcular temps de viatge
 const calculateTravelTime = (from, to) => {
-  if (!from || !to) return 'N/A';
-  
-  // Calcular distancia aproximada usando Haversine
-  const R = 6371; // Radio de la Terra en km
+  if (!from || !to) return 'No disponible';
+  const R = 6371;
   const dLat = (to.lat - from.lat) * Math.PI / 180;
   const dLng = (to.lng - from.lng) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(from.lat * Math.PI / 180) * Math.cos(to.lat * Math.PI / 180) *
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  const distance = R * c;
-  
-  // Estimar temps (mitja de 50 km/h en zones rurals)
-  const timeMinutes = Math.round((distance / 50) * 60);
-  return `${timeMinutes} min`;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(from.lat * Math.PI / 180) * Math.cos(to.lat * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return `${Math.round((2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * R / 50) * 60)} min (estimació)`;
 };
 
-// Obrir ruta a Google Maps
 const openGoogleMapsRoute = () => {
-  if (!selectedTrip.value || !selectedTrip.value.pickupCoords || !selectedTrip.value.destinationCoords) {
-    alert('No hi ha dades de la ruta disponibles');
+  const trip = selectedTrip.value;
+  if (!trip?.pickupCoords || !trip?.destinationCoords) {
+    alert('No hi ha dades de ruta disponibles.');
     return;
   }
-  
-  const pickup = `${selectedTrip.value.pickupCoords.lat},${selectedTrip.value.pickupCoords.lng}`;
-  const destination = `${selectedTrip.value.destinationCoords.lat},${selectedTrip.value.destinationCoords.lng}`;
-  
-  // URL de Google Maps
-  const url = `https://www.google.com/maps/dir/?api=1&origin=${pickup}&destination=${destination}&travelmode=driving`;
-  
-  window.open(url, '_blank');
+  const origin = `${trip.pickupCoords.lat},${trip.pickupCoords.lng}`;
+  const destination = `${trip.destinationCoords.lat},${trip.destinationCoords.lng}`;
+  window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`, '_blank', 'noopener,noreferrer');
 };
 
-// Inicialitzar mapa
 const initializeMap = async () => {
-  if (!selectedTrip.value || !selectedTrip.value.pickupCoords) {
-    console.warn('No hi ha coordenades per mostrar el mapa');
-    return;
-  }
-
+  if (!selectedTrip.value?.pickupCoords || !selectedTrip.value?.destinationCoords) return;
   try {
-    // Esperar a que Google Maps estigui carregat
     await googleMapsService.loadGoogleMaps();
-    
-    if (!window.google?.maps) {
-      console.error('Google Maps no disponible');
-      return;
-    }
-
+    if (!window.google?.maps) return;
     await nextTick();
-
-    const mapContainer = document.getElementById('trip-details-map');
-    if (!mapContainer) {
-      console.error('Container de mapa no trobat');
-      return;
-    }
-
-    // Obtenir ubicacions
-    const pickupLocation = selectedTrip.value.pickupCoords;
-    const destinationLocation = selectedTrip.value.destinationCoords;
-
-    // Crear bounds per veure tots els punts
+    const container = document.getElementById('trip-details-map');
+    if (!container) return;
+    const pickup = selectedTrip.value.pickupCoords;
+    const destination = selectedTrip.value.destinationCoords;
     const bounds = new window.google.maps.LatLngBounds();
-    if (pickupLocation) bounds.extend(pickupLocation);
-    if (destinationLocation) bounds.extend(destinationLocation);
-
-    // Crear mapa
-    map = new window.google.maps.Map(mapContainer, {
-      zoom: 13,
-      mapTypeId: 'roadmap'
-    });
-
-    // Ajustar zoom i centre
+    bounds.extend(pickup);
+    bounds.extend(destination);
+    map = new window.google.maps.Map(container, { zoom: 13, mapTypeId: 'roadmap' });
     map.fitBounds(bounds);
-
-    // Marcar ubicació de recollida (client)
-    if (pickupLocation) {
-      new window.google.maps.Marker({
-        position: pickupLocation,
-        map: map,
-        title: 'Recollida (Client)',
-        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-      });
-    }
-
-    // Marcar ubicació de destí
-    if (destinationLocation) {
-      new window.google.maps.Marker({
-        position: destinationLocation,
-        map: map,
-        title: 'Destí',
-        icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-      });
-    }
-
-    // Crear servei de direccions
-    const directionsService = new window.google.maps.DirectionsService();
-    const directionsRenderer = new window.google.maps.DirectionsRenderer({
-      map: map,
-      polylineOptions: {
-        strokeColor: '#00AA00',
-        strokeOpacity: 0.8,
-        strokeWeight: 4
-      }
-    });
-
-    // Ruta: Client a Destí
-    if (pickupLocation && destinationLocation) {
-      try {
-        const result = await directionsService.route({
-          origin: pickupLocation,
-          destination: destinationLocation,
-          travelMode: window.google.maps.TravelMode.DRIVING
-        });
-        
-        directionsRenderer.setDirections(result);
-      } catch (error) {
-        console.warn('Error obtenint ruta client→destí:', error);
-      }
-    }
-
-    console.log('✅ Mapa carregat correctament amb ruta client→destí');
+    new window.google.maps.Marker({ position: pickup, map, title: 'Recollida' });
+    new window.google.maps.Marker({ position: destination, map, title: 'Destinació' });
+    const directions = new window.google.maps.DirectionsService();
+    const renderer = new window.google.maps.DirectionsRenderer({ map });
+    const result = await directions.route({ origin: pickup, destination, travelMode: window.google.maps.TravelMode.DRIVING });
+    renderer.setDirections(result);
   } catch (error) {
-    console.error('Error carregant mapa:', error);
+    console.warn('No s’ha pogut carregar la ruta del mapa:', error);
   }
 };
 
-// Watcher per detectar quan es selecciona un viatge
-watch(selectedTrip, async (newTrip) => {
-  if (newTrip) {
-    // Esperar a que el modal es renderitzi
+watch(selectedTrip, async trip => {
+  if (trip) {
     await nextTick();
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 250));
     await initializeMap();
   }
-}, { deep: true });
-
-onMounted(() => {
-
 });
+
+onMounted(loadTrips);
 </script>
 
 <style scoped>
