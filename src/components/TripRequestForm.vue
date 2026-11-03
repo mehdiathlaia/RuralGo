@@ -653,7 +653,7 @@ const submitRequest = async () => {
         latitude: destination.lat,
         longitude: destination.lng
       },
-      serviceType: selectedService.value,
+      serviceType: selectedService.value === 'compres' ? 'comunitaris' : selectedService.value,
       notes
     });
 
