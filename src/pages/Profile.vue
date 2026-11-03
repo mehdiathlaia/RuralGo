@@ -55,6 +55,7 @@
           </div>
         </div>
 
+        <p v-if="profileError" class="profile-error" role="alert">{{ profileError }}</p>
         <form @submit.prevent="saveProfile" class="profile-form">
           <div class="form-group">
             <label>Nom complet</label>
@@ -109,7 +110,7 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-primary"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> Desa els canvis</button>
+          <button type="submit" class="btn btn-primary" :disabled="isSaving"><svg class="btn-icon" viewBox="0 0 24 24"><path :d="mdiCheck" fill="currentColor" /></svg> {{ isSaving ? 'Desant…' : 'Desa els canvis' }}</button>
         </form>
       </div>
 
@@ -263,11 +264,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '../store/authStore';
+import backendService from '../services/backendService';
 import { useRouter } from 'vue-router';
 import { mdiCheck, mdiStar, mdiCar, mdiCurrencyEur, mdiClock, mdiFileCheck, mdiEyeOutline, mdiTrashCan, mdiDownload } from '@mdi/js'
 
 const router = useRouter();
+const authStore = useAuthStore();
+const isSaving = ref(false);
+const profileError = ref('');
 const activeTab = ref('personal');
 
 const profileData = ref({
@@ -866,4 +872,5 @@ const addPaymentMethod = () => {
     grid-template-columns: 1fr;
   }
 }
+.profile-error { margin: 0 0 16px; padding: 12px 14px; border-radius: 10px; color: #8a2525; background: #fff0f0; }
 </style>
